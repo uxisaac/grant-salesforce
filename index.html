@@ -143,8 +143,24 @@
       align-items: center;
       gap: var(--slds-g-spacing-1);
     }
-    .default-split-view__subtitle {
-      display: block;
+    /* Each list item shows a number+name row and a stage+status row
+       underneath, both left/right aligned within their row. */
+    .default-split-view__row {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--slds-g-spacing-3);
+    }
+    .default-split-view__row + .default-split-view__row {
+      margin-top: var(--slds-g-spacing-1);
+    }
+    .default-split-view__number {
+      font-weight: var(--slds-g-font-weight-6);
+      color: var(--slds-g-color-on-surface-3);
+    }
+    .default-split-view__name {
+      color: var(--slds-g-color-on-surface-1);
+    }
+    .default-split-view__row_secondary {
       font-size: var(--slds-g-font-scale-neg-1);
       color: var(--slds-g-color-on-surface-1);
     }
@@ -648,26 +664,50 @@
         <ul class="slds-scrollable_y" role="listbox" aria-label="Split View List">
           <li class="slds-split-view__list-item" role="presentation">
             <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option" aria-current="page">
-              <span class="slds-truncate">Name / Title</span>
-              <span class="slds-truncate default-split-view__subtitle">Subtitle</span>
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">00360733</span>
+                <span class="default-split-view__name">TESTER SAHSHAAB</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Conditional Approval</span>
+                <span>Active</span>
+              </div>
             </a>
           </li>
           <li class="slds-split-view__list-item" role="presentation">
             <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
-              <span class="slds-truncate">Name / Title</span>
-              <span class="slds-truncate default-split-view__subtitle">Subtitle</span>
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">00360571</span>
+                <span class="default-split-view__name">MARCUS WEBB</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Intake</span>
+                <span>Active</span>
+              </div>
             </a>
           </li>
           <li class="slds-split-view__list-item" role="presentation">
             <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
-              <span class="slds-truncate">Name / Title</span>
-              <span class="slds-truncate default-split-view__subtitle">Subtitle</span>
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">00360578</span>
+                <span class="default-split-view__name">SARAH CHEN</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Conditional Approval</span>
+                <span>Active</span>
+              </div>
             </a>
           </li>
           <li class="slds-split-view__list-item" role="presentation">
             <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
-              <span class="slds-truncate">Name / Title</span>
-              <span class="slds-truncate default-split-view__subtitle">Subtitle</span>
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">00360718</span>
+                <span class="default-split-view__name">DAVID PARK</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Intake</span>
+                <span>Pending</span>
+              </div>
             </a>
           </li>
         </ul>
