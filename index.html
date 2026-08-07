@@ -264,6 +264,33 @@
       border-color: transparent;
     }
 
+    /* Home list Status column badges. */
+    .home-badge_active {
+      background: var(--slds-g-color-success-container-1);
+      color: var(--slds-g-color-on-success-1);
+      border-color: transparent;
+    }
+    .home-badge_pending {
+      background: var(--slds-g-color-warning-container-1);
+      color: var(--slds-g-color-on-warning-1);
+      border-color: transparent;
+    }
+    .home-badge_under-review {
+      background: var(--slds-g-color-info-container-1);
+      color: var(--slds-g-color-on-info-1);
+      border-color: transparent;
+    }
+    .home-badge_deadline-approaching {
+      background: var(--slds-g-color-palette-orange-90);
+      color: var(--slds-g-color-palette-orange-50);
+      border-color: transparent;
+    }
+    .home-badge_deadline-missed {
+      background: var(--slds-g-color-error-container-1);
+      color: var(--slds-g-color-on-error-1);
+      border-color: transparent;
+    }
+
     /* Financial Feasibility's completed-row highlight is permanent, not tied
        to expanded/collapsed state, so it's a standalone modifier rather than
        reusing slds-is-open. */
@@ -572,7 +599,7 @@
       <nav class="slds-context-bar__secondary">
         <div class="slds-context-bar__vertical-divider"></div>
         <ul class="slds-grid">
-          <li class="slds-context-bar__item slds-context-bar__item_tab slds-is-pinned slds-no-hover slds-is-active" data-view-id="view-home">
+          <li class="slds-context-bar__item slds-context-bar__item_tab slds-is-pinned slds-no-hover slds-is-active slds-context-bar__dropdown-trigger slds-dropdown-trigger slds-dropdown-trigger_click" data-view-id="view-home">
             <a href="#" class="slds-context-bar__label-action" aria-current="true">
               <span class="slds-icon_container">
                 <svg class="slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
@@ -582,6 +609,43 @@
               </span>
               <span class="slds-truncate">Home</span>
             </a>
+            <div class="slds-context-bar__icon-action home-tab-dropdown-toggle">
+              <button class="slds-button slds-button_icon" aria-haspopup="true" title="Show more options">
+                <svg class="slds-button__icon" aria-hidden="true">
+                  <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#down"></use>
+                </svg>
+                <span class="slds-assistive-text">Show more options</span>
+              </button>
+            </div>
+            <div class="slds-dropdown slds-dropdown_left">
+              <ul class="slds-dropdown__list" role="menu" aria-label="Home">
+                <li class="slds-dropdown__item" role="presentation">
+                  <a href="#" role="menuitem" tabindex="-1">
+                    <span class="slds-truncate">Home</span>
+                  </a>
+                </li>
+                <li class="slds-dropdown__item" role="presentation">
+                  <a href="#" role="menuitem" tabindex="-1">
+                    <span class="slds-truncate">Dashboard</span>
+                  </a>
+                </li>
+                <li class="slds-dropdown__item" role="presentation">
+                  <a href="#" role="menuitem" tabindex="-1">
+                    <span class="slds-truncate">Workbuckets</span>
+                  </a>
+                </li>
+                <li class="slds-dropdown__item" role="presentation">
+                  <a href="#" role="menuitem" tabindex="-1">
+                    <span class="slds-truncate">Team Members</span>
+                  </a>
+                </li>
+                <li class="slds-dropdown__item" role="presentation">
+                  <a href="#" role="menuitem" tabindex="-1">
+                    <span class="slds-truncate">Settings</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
           </li>
         </ul>
       </nav>
@@ -767,7 +831,7 @@
           <td>SAH00260733</td>
           <td>(415) 555-0132</td>
           <td>carlos.hazzard@gmail.com</td>
-          <td>Active</td>
+          <td><span class="slds-badge home-badge_active">Active</span></td>
           <td>North East</td>
         </tr>
         <tr>
@@ -777,7 +841,7 @@
           <td>SAH00260812</td>
           <td>(619) 123 4567</td>
           <td>john_stamos@gmail.com</td>
-          <td>Active</td>
+          <td><span class="slds-badge home-badge_active">Active</span></td>
           <td>North East</td>
         </tr>
         <tr>
@@ -787,7 +851,7 @@
           <td>SAH00261004</td>
           <td>(503) 555-0187</td>
           <td>samual.meisinger@gmail.com</td>
-          <td>Pending</td>
+          <td><span class="slds-badge home-badge_deadline-approaching">Deadline Approaching</span></td>
           <td>South East</td>
         </tr>
         <tr>
@@ -797,7 +861,7 @@
           <td>SAH00261187</td>
           <td>(206) 555-0143</td>
           <td>lucas.grant@gmail.com</td>
-          <td>Active</td>
+          <td><span class="slds-badge home-badge_active">Active</span></td>
           <td>West</td>
         </tr>
         <tr>
@@ -807,7 +871,7 @@
           <td>SAH00261340</td>
           <td>(312) 555-0198</td>
           <td>olivia.nash@gmail.com</td>
-          <td>Closed</td>
+          <td><span class="slds-badge home-badge_closed">Closed</span></td>
           <td>Midwest</td>
         </tr>
         <tr>
@@ -817,7 +881,7 @@
           <td>SAH00261502</td>
           <td>(713) 555-0176</td>
           <td>owen.blake@gmail.com</td>
-          <td>Active</td>
+          <td><span class="slds-badge home-badge_active">Active</span></td>
           <td>Southwest</td>
         </tr>
         <tr>
@@ -827,7 +891,7 @@
           <td>SAH00261675</td>
           <td>(602) 555-0154</td>
           <td>mia.torres@gmail.com</td>
-          <td>Under Review</td>
+          <td><span class="slds-badge home-badge_deadline-missed">Deadline Missed</span></td>
           <td>Southwest</td>
         </tr>
         <tr>
@@ -837,7 +901,7 @@
           <td>SAH00261811</td>
           <td>(404) 555-0129</td>
           <td>priya.mehta@gmail.com</td>
-          <td>Active</td>
+          <td><span class="slds-badge home-badge_active">Active</span></td>
           <td>South East</td>
         </tr>
         <tr>
@@ -847,7 +911,7 @@
           <td>SAH00261950</td>
           <td>(206) 555-0188</td>
           <td>nadia.frost@gmail.com</td>
-          <td>Pending</td>
+          <td><span class="slds-badge home-badge_pending">Pending</span></td>
           <td>West</td>
         </tr>
         <tr>
@@ -857,7 +921,7 @@
           <td>SAH00262104</td>
           <td>(617) 555-0112</td>
           <td>caleb.stone@gmail.com</td>
-          <td>Active</td>
+          <td><span class="slds-badge home-badge_active">Active</span></td>
           <td>North East</td>
         </tr>
         <tr>
@@ -867,7 +931,7 @@
           <td>SAH00262267</td>
           <td>(503) 555-0167</td>
           <td>isla.vance@gmail.com</td>
-          <td>Closed</td>
+          <td><span class="slds-badge home-badge_closed">Closed</span></td>
           <td>Northwest</td>
         </tr>
         <tr>
@@ -877,7 +941,7 @@
           <td>SAH00262390</td>
           <td>(214) 555-0145</td>
           <td>james.holt@gmail.com</td>
-          <td>Active</td>
+          <td><span class="slds-badge home-badge_active">Active</span></td>
           <td>South East</td>
         </tr>
         <tr>
@@ -887,7 +951,7 @@
           <td>SAH00262533</td>
           <td>(720) 555-0193</td>
           <td>tyler.hayes@gmail.com</td>
-          <td>Under Review</td>
+          <td><span class="slds-badge home-badge_under-review">Under Review</span></td>
           <td>Midwest</td>
         </tr>
         <tr>
@@ -897,7 +961,7 @@
           <td>SAH00262681</td>
           <td>(305) 555-0121</td>
           <td>max.okafor@gmail.com</td>
-          <td>Active</td>
+          <td><span class="slds-badge home-badge_active">Active</span></td>
           <td>South East</td>
         </tr>
         <tr>
@@ -907,7 +971,7 @@
           <td>SAH00262754</td>
           <td>(415) 555-0176</td>
           <td>ryan.cho@gmail.com</td>
-          <td>Pending</td>
+          <td><span class="slds-badge home-badge_pending">Pending</span></td>
           <td>West</td>
         </tr>
         <tr>
@@ -917,7 +981,7 @@
           <td>SAH00262899</td>
           <td>(312) 555-0154</td>
           <td>amara.wells@gmail.com</td>
-          <td>Active</td>
+          <td><span class="slds-badge home-badge_active">Active</span></td>
           <td>Midwest</td>
         </tr>
         <tr>
@@ -927,7 +991,7 @@
           <td>SAH00263021</td>
           <td>(206) 555-0132</td>
           <td>felix.dunn@gmail.com</td>
-          <td>Closed</td>
+          <td><span class="slds-badge home-badge_closed">Closed</span></td>
           <td>Northwest</td>
         </tr>
         <tr>
@@ -937,7 +1001,7 @@
           <td>SAH00263188</td>
           <td>(617) 555-0187</td>
           <td>david.park@gmail.com</td>
-          <td>Active</td>
+          <td><span class="slds-badge home-badge_active">Active</span></td>
           <td>North East</td>
         </tr>
         <tr>
@@ -947,7 +1011,7 @@
           <td>SAH00263305</td>
           <td>(713) 555-0143</td>
           <td>ethan.cole@gmail.com</td>
-          <td>Under Review</td>
+          <td><span class="slds-badge home-badge_under-review">Under Review</span></td>
           <td>Southwest</td>
         </tr>
         <tr>
@@ -957,7 +1021,7 @@
           <td>SAH00263447</td>
           <td>(602) 555-0198</td>
           <td>sofia.lund@gmail.com</td>
-          <td>Active</td>
+          <td><span class="slds-badge home-badge_active">Active</span></td>
           <td>Southwest</td>
         </tr>
         <tr>
@@ -967,7 +1031,7 @@
           <td>SAH00263592</td>
           <td>(404) 555-0176</td>
           <td>marcus.webb@gmail.com</td>
-          <td>Pending</td>
+          <td><span class="slds-badge home-badge_pending">Pending</span></td>
           <td>South East</td>
         </tr>
         <tr>
@@ -977,7 +1041,7 @@
           <td>SAH00263710</td>
           <td>(214) 555-0154</td>
           <td>sarah.chen@gmail.com</td>
-          <td>Active</td>
+          <td><span class="slds-badge home-badge_active">Active</span></td>
           <td>South East</td>
         </tr>
         <tr>
@@ -987,7 +1051,7 @@
           <td>SAH00263865</td>
           <td>(720) 555-0121</td>
           <td>clara.reeves@gmail.com</td>
-          <td>Closed</td>
+          <td><span class="slds-badge home-badge_closed">Closed</span></td>
           <td>Midwest</td>
         </tr>
         <tr>
@@ -997,7 +1061,7 @@
           <td>SAH00263998</td>
           <td>(305) 555-0193</td>
           <td>noah.briggs@gmail.com</td>
-          <td>Active</td>
+          <td><span class="slds-badge home-badge_active">Active</span></td>
           <td>South East</td>
         </tr>
         <tr>
@@ -1007,7 +1071,7 @@
           <td>SAH00264102</td>
           <td>(415) 555-0145</td>
           <td>leah.kim@gmail.com</td>
-          <td>Under Review</td>
+          <td><span class="slds-badge home-badge_under-review">Under Review</span></td>
           <td>West</td>
         </tr>
       </tbody>
@@ -1042,7 +1106,7 @@
           </div>
         </div>
 
-        <div class="slds-page-header__col-actions">
+        <div class="slds-page-header__col-actions" hidden>
           <div class="slds-page-header__controls">
             <div class="slds-page-header__control">
               <div class="slds-button-group" role="group">
@@ -1056,6 +1120,40 @@
                     </svg>
                     <span class="slds-assistive-text">More Actions</span>
                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slds-page-header__col-actions">
+          <div class="slds-page-header__controls">
+            <div class="slds-page-header__control">
+              <div class="slds-dropdown-trigger slds-dropdown-trigger_click">
+                <button class="slds-button slds-button_brand action-menu-button" aria-haspopup="true">
+                  Action
+                  <svg class="slds-button__icon slds-button__icon_right" aria-hidden="true">
+                    <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#down"></use>
+                  </svg>
+                </button>
+                <div class="slds-dropdown slds-dropdown_right">
+                  <ul class="slds-dropdown__list" role="menu" aria-label="Action">
+                    <li class="slds-dropdown__item" role="presentation">
+                      <a href="#" role="menuitem" tabindex="-1"><span class="slds-truncate">Placeholder Option 1</span></a>
+                    </li>
+                    <li class="slds-dropdown__item" role="presentation">
+                      <a href="#" role="menuitem" tabindex="-1"><span class="slds-truncate">Placeholder Option 2</span></a>
+                    </li>
+                    <li class="slds-dropdown__item" role="presentation">
+                      <a href="#" role="menuitem" tabindex="-1"><span class="slds-truncate">Placeholder Option 3</span></a>
+                    </li>
+                    <li class="slds-dropdown__item" role="presentation">
+                      <a href="#" role="menuitem" tabindex="-1"><span class="slds-truncate">Placeholder Option 4</span></a>
+                    </li>
+                    <li class="slds-dropdown__item" role="presentation">
+                      <a href="#" role="menuitem" tabindex="-1"><span class="slds-truncate">Placeholder Option 5</span></a>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -2870,6 +2968,34 @@
       });
     });
 
+    document.querySelectorAll('.home-tab-dropdown-toggle').forEach(function (wrapper) {
+      var button = wrapper.querySelector('.slds-button');
+      var trigger = wrapper.closest('.slds-dropdown-trigger');
+      if (!button || !trigger) return;
+      button.addEventListener('click', function (event) {
+        event.stopPropagation();
+        trigger.classList.toggle('slds-is-open');
+      });
+      document.addEventListener('click', function (event) {
+        if (!trigger.contains(event.target)) {
+          trigger.classList.remove('slds-is-open');
+        }
+      });
+    });
+
+    document.querySelectorAll('.action-menu-button').forEach(function (button) {
+      var trigger = button.closest('.slds-dropdown-trigger');
+      if (!trigger) return;
+      button.addEventListener('click', function (event) {
+        event.stopPropagation();
+        trigger.classList.toggle('slds-is-open');
+      });
+      document.addEventListener('click', function (event) {
+        if (!trigger.contains(event.target)) {
+          trigger.classList.remove('slds-is-open');
+        }
+      });
+    });
   </script>
 
 </body>
