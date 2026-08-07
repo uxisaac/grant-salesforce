@@ -98,6 +98,57 @@
       background: var(--slds-g-color-surface-container-1);
     }
 
+    /* Default Split View demo: header (icon + title picker + pin), meta row
+       (item count + column-selector + refresh), search, sortable column
+       header, checkbox list items — matching the component library's
+       reference layout with generic placeholder content. */
+    .default-split-view__header {
+      display: flex;
+      align-items: center;
+      gap: var(--slds-g-spacing-3);
+    }
+    .default-split-view__picker {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .default-split-view__picker-button {
+      display: flex;
+      align-items: center;
+      gap: var(--slds-g-spacing-2);
+      width: 100%;
+      background: none;
+      border: 0;
+      padding: 0;
+    }
+    .default-split-view__picker-button h2 {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .default-split-view__meta {
+      padding-inline: var(--slds-g-spacing-5);
+      padding-block: var(--slds-g-spacing-2);
+    }
+    .default-split-view__meta-text {
+      color: var(--slds-g-color-on-surface-1);
+    }
+    .default-split-view__meta-actions {
+      gap: var(--slds-g-spacing-1);
+    }
+    .default-split-view__search .slds-input {
+      border-radius: var(--slds-g-radius-border-pill);
+    }
+    .default-split-view__sort-label {
+      display: flex;
+      align-items: center;
+      gap: var(--slds-g-spacing-1);
+    }
+    .default-split-view__subtitle {
+      display: block;
+      font-size: var(--slds-g-font-scale-neg-1);
+      color: var(--slds-g-color-on-surface-1);
+    }
+
     /* .slds-accordion__summary-content is a flex item (sibling to the
        chevron icon inside the summary button) with no flex-grow of its own —
        it shrink-wraps to its content, so our grid's "width:100%" below was
@@ -321,6 +372,29 @@
       line-height: var(--slds-g-font-lineheight-2);
     }
 
+    .home-list-header {
+      margin-bottom: var(--slds-g-spacing-4);
+    }
+    .home-list-controls {
+      gap: var(--slds-g-spacing-3);
+    }
+    .home-list-search .slds-input {
+      border-radius: var(--slds-g-radius-border-pill);
+      min-width: 20rem;
+    }
+    /* Reference design shows every column header with a visible chevron —
+       SLDS's own .slds-is-sortable__icon is display:none until the column
+       is actually sorted, so this is a plain always-visible icon instead. */
+    .home-list-th {
+      display: flex;
+      align-items: center;
+      gap: var(--slds-g-spacing-1);
+    }
+    .home-list-table th,
+    .home-list-table td {
+      white-space: nowrap;
+    }
+
     /* Sibling to the summary-action button (not nested inside it — a
        <button> can't contain another <button>), so it lands at the far
        right of the row since the heading next to it has flex-grow:1. */
@@ -482,8 +556,8 @@
       <nav class="slds-context-bar__secondary">
         <div class="slds-context-bar__vertical-divider"></div>
         <ul class="slds-grid">
-          <li class="slds-context-bar__item slds-context-bar__item_tab slds-is-pinned slds-no-hover" data-view-id="view-workbucket">
-            <a href="#" class="slds-context-bar__label-action" aria-current="false">
+          <li class="slds-context-bar__item slds-context-bar__item_tab slds-is-pinned slds-no-hover slds-is-active" data-view-id="view-home">
+            <a href="#" class="slds-context-bar__label-action" aria-current="true">
               <span class="slds-icon_container">
                 <svg class="slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
                   <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#home"></use>
@@ -492,26 +566,6 @@
               </span>
               <span class="slds-truncate">Home</span>
             </a>
-          </li>
-          <li class="slds-context-bar__item slds-context-bar__item_tab slds-is-active" data-view-id="view-workbucket">
-            <a href="#" class="slds-context-bar__label-action" aria-current="true">
-              <span class="slds-icon_container">
-                <svg class="slds-icon slds-icon_small" aria-hidden="true">
-                  <use xlink:href="assets/icons/standard-sprite/svg/symbols.svg#account"></use>
-                </svg>
-                <span class="slds-assistive-text">Worckbucket</span>
-              </span>
-              <span class="slds-truncate">SAH00260733</span>
-              <span class="slds-assistive-text">Current Page:</span>
-            </a>
-            <div class="slds-context-bar__icon-action slds-col_bump-left">
-              <button class="slds-button slds-button_icon slds-button_icon-container slds-context-bar__button" title="Close SAH00260733">
-                <svg class="slds-button__icon" aria-hidden="true">
-                  <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#close"></use>
-                </svg>
-                <span class="slds-assistive-text">Close SAH00260733</span>
-              </button>
-            </div>
           </li>
         </ul>
       </nav>
@@ -527,28 +581,94 @@
         <span class="slds-assistive-text">Collapse List</span>
       </button>
       <article class="slds-split-view slds-grid slds-grid_vertical slds-grow">
-        <header class="slds-split-view__header">
-          <h2 class="slds-text-heading_small">Workbaskets</h2>
+        <header class="slds-split-view__header default-split-view__header">
+          <div class="slds-media__figure">
+            <span class="slds-icon_container slds-icon-standard-task" title="Split View">
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href="assets/icons/standard-sprite/svg/symbols.svg#task"></use>
+              </svg>
+              <span class="slds-assistive-text">Split View</span>
+            </span>
+          </div>
+
+          <div class="slds-dropdown-trigger slds-dropdown-trigger_click default-split-view__picker">
+            <button class="slds-button default-split-view__picker-button" aria-haspopup="true" aria-expanded="false" title="Split View Title">
+              <h2 class="slds-text-heading_small slds-truncate">Split View Title</h2>
+              <svg class="slds-button__icon slds-button__icon_small" aria-hidden="true">
+                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#down"></use>
+              </svg>
+            </button>
+          </div>
+
+          <button class="slds-button slds-button_icon slds-button_icon-border" title="Pin">
+            <svg class="slds-button__icon" aria-hidden="true">
+              <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#pin"></use>
+            </svg>
+            <span class="slds-assistive-text">Pin</span>
+          </button>
         </header>
-        <div class="slds-split-view__list-header slds-grid">
-          <span>Name</span>
+
+        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center default-split-view__meta">
+          <span class="slds-text-body_small default-split-view__meta-text">42 items &bull; Updated just now</span>
+          <div class="slds-grid default-split-view__meta-actions">
+            <button class="slds-button slds-button_icon" title="Choose columns to display">
+              <svg class="slds-button__icon" aria-hidden="true">
+                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#table_settings"></use>
+              </svg>
+              <span class="slds-assistive-text">Choose columns to display</span>
+            </button>
+            <button class="slds-button slds-button_icon" title="Refresh">
+              <svg class="slds-button__icon" aria-hidden="true">
+                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#refresh"></use>
+              </svg>
+              <span class="slds-assistive-text">Refresh</span>
+            </button>
+          </div>
         </div>
-        <ul class="slds-scrollable_y" role="listbox" aria-label="Workbaskets">
+
+        <div class="slds-p-around_small default-split-view__search">
+          <div class="slds-form-element">
+            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+              <svg class="slds-icon slds-icon_xx-small slds-icon-text-default slds-input__icon slds-input__icon_left" aria-hidden="true">
+                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#search"></use>
+              </svg>
+              <input type="search" class="slds-input" placeholder="Search..." />
+            </div>
+          </div>
+        </div>
+
+        <div class="slds-split-view__list-header slds-grid">
+          <span class="default-split-view__sort-label">
+            Lead Score
+            <svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true">
+              <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#arrowdown"></use>
+            </svg>
+          </span>
+        </div>
+        <ul class="slds-scrollable_y" role="listbox" aria-label="Split View List">
           <li class="slds-split-view__list-item" role="presentation">
-            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option" aria-current="page">SAH00260733</a>
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option" aria-current="page">
+              <span class="slds-truncate">Name / Title</span>
+              <span class="slds-truncate default-split-view__subtitle">Subtitle</span>
+            </a>
           </li>
           <li class="slds-split-view__list-item" role="presentation">
-            <abbr class="slds-indicator_unread" title="Unread">•</abbr>
-            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">SAH00260812</a>
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <span class="slds-truncate">Name / Title</span>
+              <span class="slds-truncate default-split-view__subtitle">Subtitle</span>
+            </a>
           </li>
           <li class="slds-split-view__list-item" role="presentation">
-            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">SAH00261004</a>
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <span class="slds-truncate">Name / Title</span>
+              <span class="slds-truncate default-split-view__subtitle">Subtitle</span>
+            </a>
           </li>
           <li class="slds-split-view__list-item" role="presentation">
-            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">SAH00261187</a>
-          </li>
-          <li class="slds-split-view__list-item" role="presentation">
-            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">SAH00261340</a>
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <span class="slds-truncate">Name / Title</span>
+              <span class="slds-truncate default-split-view__subtitle">Subtitle</span>
+            </a>
           </li>
         </ul>
       </article>
@@ -556,7 +676,306 @@
 
   <main id="main-content" class="slds-p-around_medium slds-grow">
 
-  <div class="app-view" id="view-workbucket">
+  <div class="app-view" id="view-home">
+
+    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-wrap home-list-header">
+      <h2 class="slds-text-heading_medium">150 Items on this list</h2>
+      <div class="slds-grid slds-grid_vertical-align-center home-list-controls">
+        <button class="slds-button slds-button_neutral">
+          <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+            <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#filter"></use>
+          </svg>
+          Filter
+        </button>
+        <div class="slds-form-element home-list-search">
+          <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+            <svg class="slds-icon slds-icon_xx-small slds-icon-text-default slds-input__icon slds-input__icon_left" aria-hidden="true">
+              <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#search"></use>
+            </svg>
+            <input type="search" class="slds-input" placeholder="Search by name, SSN and case number" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <table class="slds-table slds-table_bordered slds-table_cell-buffer home-list-table">
+      <thead>
+        <tr class="slds-line-height_reset">
+          <th class="slds-cell-shrink" scope="col">
+            <div class="slds-checkbox">
+              <input type="checkbox" id="select-all-rows" />
+              <label class="slds-checkbox__label" for="select-all-rows">
+                <span class="slds-checkbox_faux"></span>
+                <span class="slds-assistive-text">Select All</span>
+              </label>
+            </div>
+          </th>
+          <th scope="col"><div class="home-list-th"><span class="slds-truncate">Label</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
+          <th scope="col"><div class="home-list-th"><span class="slds-truncate">Grant Number</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
+          <th scope="col"><div class="home-list-th"><span class="slds-truncate">Workbuckets</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
+          <th scope="col"><div class="home-list-th"><span class="slds-truncate">Phone Number</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
+          <th scope="col"><div class="home-list-th"><span class="slds-truncate">Email</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
+          <th scope="col"><div class="home-list-th"><span class="slds-truncate">Status</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
+          <th scope="col"><div class="home-list-th"><span class="slds-truncate">Region</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-1" /><label class="slds-checkbox__label" for="row-select-1"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Carlos Hazzard</span></label></div></td>
+          <td><a href="#">Carlos Hazzard</a></td>
+          <td>#12345461</td>
+          <td>SAH00260733</td>
+          <td>(415) 555-0132</td>
+          <td>carlos.hazzard@gmail.com</td>
+          <td>Active</td>
+          <td>North East</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-2" /><label class="slds-checkbox__label" for="row-select-2"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select John Stamos</span></label></div></td>
+          <td><a href="#">John Stamos</a></td>
+          <td>#12345460</td>
+          <td>SAH00260812</td>
+          <td>(619) 123 4567</td>
+          <td>john_stamos@gmail.com</td>
+          <td>Active</td>
+          <td>North East</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-3" /><label class="slds-checkbox__label" for="row-select-3"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Samual Meisinger</span></label></div></td>
+          <td><a href="#">Samual Meisinger</a></td>
+          <td>#12345462</td>
+          <td>SAH00261004</td>
+          <td>(503) 555-0187</td>
+          <td>samual.meisinger@gmail.com</td>
+          <td>Pending</td>
+          <td>South East</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-4" /><label class="slds-checkbox__label" for="row-select-4"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Lucas Grant</span></label></div></td>
+          <td><a href="#">Lucas Grant</a></td>
+          <td>#12345463</td>
+          <td>SAH00261187</td>
+          <td>(206) 555-0143</td>
+          <td>lucas.grant@gmail.com</td>
+          <td>Active</td>
+          <td>West</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-5" /><label class="slds-checkbox__label" for="row-select-5"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Olivia Nash</span></label></div></td>
+          <td><a href="#">Olivia Nash</a></td>
+          <td>#12345464</td>
+          <td>SAH00261340</td>
+          <td>(312) 555-0198</td>
+          <td>olivia.nash@gmail.com</td>
+          <td>Closed</td>
+          <td>Midwest</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-6" /><label class="slds-checkbox__label" for="row-select-6"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Owen Blake</span></label></div></td>
+          <td><a href="#">Owen Blake</a></td>
+          <td>#12345465</td>
+          <td>SAH00261502</td>
+          <td>(713) 555-0176</td>
+          <td>owen.blake@gmail.com</td>
+          <td>Active</td>
+          <td>Southwest</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-7" /><label class="slds-checkbox__label" for="row-select-7"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Mia Torres</span></label></div></td>
+          <td><a href="#">Mia Torres</a></td>
+          <td>#12345466</td>
+          <td>SAH00261675</td>
+          <td>(602) 555-0154</td>
+          <td>mia.torres@gmail.com</td>
+          <td>Under Review</td>
+          <td>Southwest</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-8" /><label class="slds-checkbox__label" for="row-select-8"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Priya Mehta</span></label></div></td>
+          <td><a href="#">Priya Mehta</a></td>
+          <td>#12345467</td>
+          <td>SAH00261811</td>
+          <td>(404) 555-0129</td>
+          <td>priya.mehta@gmail.com</td>
+          <td>Active</td>
+          <td>South East</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-9" /><label class="slds-checkbox__label" for="row-select-9"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Nadia Frost</span></label></div></td>
+          <td><a href="#">Nadia Frost</a></td>
+          <td>#12345468</td>
+          <td>SAH00261950</td>
+          <td>(206) 555-0188</td>
+          <td>nadia.frost@gmail.com</td>
+          <td>Pending</td>
+          <td>West</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-10" /><label class="slds-checkbox__label" for="row-select-10"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Caleb Stone</span></label></div></td>
+          <td><a href="#">Caleb Stone</a></td>
+          <td>#12345469</td>
+          <td>SAH00262104</td>
+          <td>(617) 555-0112</td>
+          <td>caleb.stone@gmail.com</td>
+          <td>Active</td>
+          <td>North East</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-11" /><label class="slds-checkbox__label" for="row-select-11"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Isla Vance</span></label></div></td>
+          <td><a href="#">Isla Vance</a></td>
+          <td>#12345470</td>
+          <td>SAH00262267</td>
+          <td>(503) 555-0167</td>
+          <td>isla.vance@gmail.com</td>
+          <td>Closed</td>
+          <td>Northwest</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-12" /><label class="slds-checkbox__label" for="row-select-12"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select James Holt</span></label></div></td>
+          <td><a href="#">James Holt</a></td>
+          <td>#12345471</td>
+          <td>SAH00262390</td>
+          <td>(214) 555-0145</td>
+          <td>james.holt@gmail.com</td>
+          <td>Active</td>
+          <td>South East</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-13" /><label class="slds-checkbox__label" for="row-select-13"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Tyler Hayes</span></label></div></td>
+          <td><a href="#">Tyler Hayes</a></td>
+          <td>#12345472</td>
+          <td>SAH00262533</td>
+          <td>(720) 555-0193</td>
+          <td>tyler.hayes@gmail.com</td>
+          <td>Under Review</td>
+          <td>Midwest</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-14" /><label class="slds-checkbox__label" for="row-select-14"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Max Okafor</span></label></div></td>
+          <td><a href="#">Max Okafor</a></td>
+          <td>#12345473</td>
+          <td>SAH00262681</td>
+          <td>(305) 555-0121</td>
+          <td>max.okafor@gmail.com</td>
+          <td>Active</td>
+          <td>South East</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-15" /><label class="slds-checkbox__label" for="row-select-15"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Ryan Cho</span></label></div></td>
+          <td><a href="#">Ryan Cho</a></td>
+          <td>#12345474</td>
+          <td>SAH00262754</td>
+          <td>(415) 555-0176</td>
+          <td>ryan.cho@gmail.com</td>
+          <td>Pending</td>
+          <td>West</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-16" /><label class="slds-checkbox__label" for="row-select-16"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Amara Wells</span></label></div></td>
+          <td><a href="#">Amara Wells</a></td>
+          <td>#12345475</td>
+          <td>SAH00262899</td>
+          <td>(312) 555-0154</td>
+          <td>amara.wells@gmail.com</td>
+          <td>Active</td>
+          <td>Midwest</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-17" /><label class="slds-checkbox__label" for="row-select-17"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Felix Dunn</span></label></div></td>
+          <td><a href="#">Felix Dunn</a></td>
+          <td>#12345476</td>
+          <td>SAH00263021</td>
+          <td>(206) 555-0132</td>
+          <td>felix.dunn@gmail.com</td>
+          <td>Closed</td>
+          <td>Northwest</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-18" /><label class="slds-checkbox__label" for="row-select-18"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select David Park</span></label></div></td>
+          <td><a href="#">David Park</a></td>
+          <td>#12345477</td>
+          <td>SAH00263188</td>
+          <td>(617) 555-0187</td>
+          <td>david.park@gmail.com</td>
+          <td>Active</td>
+          <td>North East</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-19" /><label class="slds-checkbox__label" for="row-select-19"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Ethan Cole</span></label></div></td>
+          <td><a href="#">Ethan Cole</a></td>
+          <td>#12345478</td>
+          <td>SAH00263305</td>
+          <td>(713) 555-0143</td>
+          <td>ethan.cole@gmail.com</td>
+          <td>Under Review</td>
+          <td>Southwest</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-20" /><label class="slds-checkbox__label" for="row-select-20"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Sofia Lund</span></label></div></td>
+          <td><a href="#">Sofia Lund</a></td>
+          <td>#12345479</td>
+          <td>SAH00263447</td>
+          <td>(602) 555-0198</td>
+          <td>sofia.lund@gmail.com</td>
+          <td>Active</td>
+          <td>Southwest</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-21" /><label class="slds-checkbox__label" for="row-select-21"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Marcus Webb</span></label></div></td>
+          <td><a href="#">Marcus Webb</a></td>
+          <td>#12345480</td>
+          <td>SAH00263592</td>
+          <td>(404) 555-0176</td>
+          <td>marcus.webb@gmail.com</td>
+          <td>Pending</td>
+          <td>South East</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-22" /><label class="slds-checkbox__label" for="row-select-22"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Sarah Chen</span></label></div></td>
+          <td><a href="#">Sarah Chen</a></td>
+          <td>#12345481</td>
+          <td>SAH00263710</td>
+          <td>(214) 555-0154</td>
+          <td>sarah.chen@gmail.com</td>
+          <td>Active</td>
+          <td>South East</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-23" /><label class="slds-checkbox__label" for="row-select-23"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Clara Reeves</span></label></div></td>
+          <td><a href="#">Clara Reeves</a></td>
+          <td>#12345482</td>
+          <td>SAH00263865</td>
+          <td>(720) 555-0121</td>
+          <td>clara.reeves@gmail.com</td>
+          <td>Closed</td>
+          <td>Midwest</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-24" /><label class="slds-checkbox__label" for="row-select-24"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Noah Briggs</span></label></div></td>
+          <td><a href="#">Noah Briggs</a></td>
+          <td>#12345483</td>
+          <td>SAH00263998</td>
+          <td>(305) 555-0193</td>
+          <td>noah.briggs@gmail.com</td>
+          <td>Active</td>
+          <td>South East</td>
+        </tr>
+        <tr>
+          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-25" /><label class="slds-checkbox__label" for="row-select-25"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Leah Kim</span></label></div></td>
+          <td><a href="#">Leah Kim</a></td>
+          <td>#12345484</td>
+          <td>SAH00264102</td>
+          <td>(415) 555-0145</td>
+          <td>leah.kim@gmail.com</td>
+          <td>Under Review</td>
+          <td>West</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <div class="app-view" id="view-workbucket" hidden>
 
     <div class="slds-page-header slds-page-header_record-home">
       <div class="slds-page-header__row">
@@ -1452,13 +1871,99 @@
 
           </div>
           <div class="slds-tabs_default__content slds-hide" role="tabpanel" id="panel-grant-details" aria-labelledby="tab-grant-details">
-            <div class="checklist-empty-state">
-              <svg class="slds-icon" aria-hidden="true">
-                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
-              </svg>
-              <h3 class="slds-text-heading_medium">No Grant Details yet</h3>
-              <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
+
+            <div class="slds-grid slds-grid_align-spread slds-wrap veteran-subnav">
+              <div class="veteran-subnav__pills">
+                <button class="slds-button slds-button_outline-brand veteran-subnav__pill veteran-subnav__pill_active" data-panel-id="grant-detail-panel-case-info">Case Information</button>
+                <button class="slds-button slds-button_neutral veteran-subnav__pill" data-panel-id="grant-detail-panel-checklist-dates">Grant Checklist Dates</button>
+                <button class="slds-button slds-button_neutral veteran-subnav__pill" data-panel-id="grant-detail-panel-veteran-info">Veteran Information</button>
+                <button class="slds-button slds-button_neutral veteran-subnav__pill" data-panel-id="grant-detail-panel-grant-info">Grant Information</button>
+              </div>
+              <div class="slds-form-element veteran-subnav__search">
+                <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                  <svg class="slds-icon slds-icon_xx-small slds-icon-text-default slds-input__icon slds-input__icon_left" aria-hidden="true">
+                    <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#search"></use>
+                  </svg>
+                  <input type="search" class="slds-input" placeholder="Search Grant Details..." />
+                </div>
+              </div>
             </div>
+
+            <div class="veteran-subnav-panel" id="grant-detail-panel-case-info">
+              <ul class="slds-page-header__detail-row">
+                <li class="slds-page-header__detail-block">
+                  <dl>
+                    <dt class="slds-text-title slds-truncate" title="Workbucket Number">Workbucket Number</dt>
+                    <dd class="slds-truncate">#12345467</dd>
+                  </dl>
+                </li>
+                <li class="slds-page-header__detail-block">
+                  <dl>
+                    <dt class="slds-text-title slds-truncate" title="Status">Status</dt>
+                    <dd class="slds-truncate">Intake</dd>
+                  </dl>
+                </li>
+                <li class="slds-page-header__detail-block">
+                  <dl>
+                    <dt class="slds-text-title slds-truncate" title="Workbucket Owner">Workbucket Owner</dt>
+                    <dd class="slds-truncate"><a href="#">Samantha Rogers</a></dd>
+                  </dl>
+                </li>
+                <li class="slds-page-header__detail-block">
+                  <dl>
+                    <dt class="slds-text-title slds-truncate" title="Next Task Due Date">Next Task Due Date</dt>
+                    <dd class="slds-truncate">3/26/2026</dd>
+                  </dl>
+                </li>
+                <li class="slds-page-header__detail-block">
+                  <dl>
+                    <dt class="slds-text-title slds-truncate" title="Grant Number">Grant Number</dt>
+                    <dd class="slds-truncate">SAH00799341</dd>
+                  </dl>
+                </li>
+                <li class="slds-page-header__detail-block">
+                  <dl>
+                    <dt class="slds-text-title slds-truncate" title="Grant Status">Grant Status</dt>
+                    <dd class="slds-truncate">Active</dd>
+                  </dl>
+                </li>
+                <li class="slds-page-header__detail-block">
+                  <dl>
+                    <dt class="slds-text-title slds-truncate" title="Region">Region</dt>
+                    <dd class="slds-truncate">Northwest</dd>
+                  </dl>
+                </li>
+              </ul>
+            </div>
+
+            <div class="veteran-subnav-panel" id="grant-detail-panel-checklist-dates" hidden>
+              <div class="checklist-empty-state">
+                <svg class="slds-icon" aria-hidden="true">
+                  <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
+                </svg>
+                <h3 class="slds-text-heading_medium">No Grant Checklist Dates yet</h3>
+                <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
+              </div>
+            </div>
+            <div class="veteran-subnav-panel" id="grant-detail-panel-veteran-info" hidden>
+              <div class="checklist-empty-state">
+                <svg class="slds-icon" aria-hidden="true">
+                  <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
+                </svg>
+                <h3 class="slds-text-heading_medium">No Veteran Information yet</h3>
+                <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
+              </div>
+            </div>
+            <div class="veteran-subnav-panel" id="grant-detail-panel-grant-info" hidden>
+              <div class="checklist-empty-state">
+                <svg class="slds-icon" aria-hidden="true">
+                  <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
+                </svg>
+                <h3 class="slds-text-heading_medium">No Grant Information yet</h3>
+                <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
+              </div>
+            </div>
+
           </div>
           <div class="slds-tabs_default__content slds-hide" role="tabpanel" id="panel-notes" aria-labelledby="tab-notes">
             <div class="checklist-empty-state">
@@ -2257,6 +2762,56 @@
           activateNavTab(li);
         });
       });
+
+      function openWorkbucketTab() {
+        var existing = navTabList.querySelector('[data-view-id="view-workbucket"]');
+        if (existing) {
+          activateNavTab(existing);
+          return;
+        }
+
+        var activeTab = navTabList.querySelector(':scope > .slds-context-bar__item_tab.slds-is-active');
+
+        var li = document.createElement('li');
+        li.className = 'slds-context-bar__item slds-context-bar__item_tab';
+        li.setAttribute('data-view-id', 'view-workbucket');
+        li.innerHTML =
+          '<a href="#" class="slds-context-bar__label-action" aria-current="false">' +
+            '<span class="slds-icon_container">' +
+              '<svg class="slds-icon slds-icon_small" aria-hidden="true">' +
+                '<use xlink:href="assets/icons/standard-sprite/svg/symbols.svg#account"></use>' +
+              '</svg>' +
+              '<span class="slds-assistive-text">Worckbucket</span>' +
+            '</span>' +
+            '<span class="slds-truncate">SAH00260733</span>' +
+            '<span class="slds-assistive-text">Current Page:</span>' +
+          '</a>' +
+          '<div class="slds-context-bar__icon-action slds-col_bump-left">' +
+            '<button class="slds-button slds-button_icon slds-button_icon-container slds-context-bar__button" title="Close SAH00260733">' +
+              '<svg class="slds-button__icon" aria-hidden="true">' +
+                '<use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#close"></use>' +
+              '</svg>' +
+              '<span class="slds-assistive-text">Close SAH00260733</span>' +
+            '</button>' +
+          '</div>';
+
+        if (activeTab) {
+          activeTab.insertAdjacentElement('afterend', li);
+        } else {
+          navTabList.appendChild(li);
+        }
+
+        wireNavTab(li);
+        activateNavTab(li);
+      }
+
+      document.querySelectorAll('.home-list-table tbody tr').forEach(function (row) {
+        row.addEventListener('click', function (event) {
+          if (event.target.closest('.slds-checkbox')) return;
+          event.preventDefault();
+          openWorkbucketTab();
+        });
+      });
     })();
 
     document.querySelectorAll('.veteran-subnav__pills').forEach(function (pillGroup) {
@@ -2274,6 +2829,7 @@
         });
       });
     });
+
   </script>
 
 </body>
