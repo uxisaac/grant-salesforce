@@ -6,6 +6,16 @@
   <title>SLDS Prototype</title>
   <link rel="stylesheet" href="css/slds2.cosmos.css" />
   <style>
+    /* SLDS classes like .slds-button set their own `display` (inline-flex,
+       flex, etc.) as an author-level rule, which always beats the browser's
+       built-in `[hidden] { display: none }` UA-stylesheet default — UA
+       styles are the lowest-priority cascade origin regardless of
+       specificity. Without this, adding a bare `hidden` attribute to any
+       SLDS component silently does nothing. */
+    [hidden] {
+      display: none !important;
+    }
+
     /* .slds-global-header_container is position:fixed, so it's removed from
        normal flow — offset the body by its height or the nav/main below it
        renders hidden underneath the header. */
@@ -91,6 +101,20 @@
       flex: 0 0 auto;
     }
 
+    /* .slds-scrollable_y only sets max-height:100% + overflow-y:auto — as a
+       flex item in the split-view's column layout, it defaults to
+       min-height:auto (its content's full height), so with 25 items it just
+       grew the whole panel taller instead of scrolling. flex-basis 0 + grow
+       makes it fill the remaining column space, min-height:0 lets it
+       actually shrink below content size so overflow-y:auto can kick in. */
+    .slds-split-view .slds-scrollable_y {
+      flex: 1 1 0;
+      min-height: 0;
+    }
+    .slds-split-view {
+      min-height: 0;
+    }
+
     /* Match the split-view panel's background to the same card-background
        token used on the page header and the empty card, instead of its
        default slds-g-color-surface-2. */
@@ -125,6 +149,11 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+    .default-split-view__listview-dropdown {
+      width: 20rem;
+      left: 0;
+      transform: none;
+    }
     .default-split-view__meta {
       padding-inline: var(--slds-g-spacing-5);
       padding-block: var(--slds-g-spacing-2);
@@ -147,6 +176,7 @@
        underneath, both left/right aligned within their row. */
     .default-split-view__row {
       display: flex;
+      align-items: center;
       justify-content: space-between;
       gap: var(--slds-g-spacing-3);
     }
@@ -437,6 +467,17 @@
     .home-list-table td {
       white-space: nowrap;
     }
+    .home-list-table th:first-child,
+    .home-list-table td:first-child {
+      display: none;
+    }
+
+    /* On row hover, SLDS swaps the divider below the hovered row from
+       --slds-g-color-border-1 to the darker border-2 token — keep it the
+       same as the non-hovered state instead. */
+    .home-list-table {
+      --_slds-c-datatable-row-color-border-hover: var(--slds-g-color-border-1);
+    }
 
     /* Sibling to the summary-action button (not nested inside it — a
        <button> can't contain another <button>), so it lands at the far
@@ -673,11 +714,88 @@
 
           <div class="slds-dropdown-trigger slds-dropdown-trigger_click default-split-view__picker">
             <button class="slds-button default-split-view__picker-button" aria-haspopup="true" aria-expanded="false" title="Split View Title">
-              <h2 class="slds-text-heading_small slds-truncate">Split View Title</h2>
+              <h2 class="slds-text-heading_small slds-truncate">All Active Cases</h2>
               <svg class="slds-button__icon slds-button__icon_small" aria-hidden="true">
                 <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#down"></use>
               </svg>
             </button>
+
+            <div class="slds-dropdown slds-dropdown_left slds-dropdown_medium default-split-view__listview-dropdown">
+              <div class="slds-p-around_small">
+                <div class="slds-form-element">
+                  <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                    <input type="search" class="slds-input" placeholder="Search lists..." />
+                    <svg class="slds-icon slds-icon_xx-small slds-icon-text-default slds-input__icon slds-input__icon_right" aria-hidden="true">
+                      <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#search"></use>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <ul class="slds-listbox slds-listbox_vertical" role="listbox" aria-label="List Views">
+                <li role="presentation" class="slds-listbox__item">
+                  <div class="slds-listbox__option-header slds-p-horizontal_small" role="presentation">
+                    <span class="slds-text-title_caps">Recent List Views</span>
+                  </div>
+                </li>
+                <li role="presentation" class="slds-listbox__item">
+                  <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-is-selected" role="option" aria-selected="true">
+                    <span class="slds-media__figure slds-listbox__option-icon">
+                      <svg class="slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                        <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#check"></use>
+                      </svg>
+                    </span>
+                    <span class="slds-media__body">
+                      <span class="slds-truncate">All Active Cases</span>
+                    </span>
+                  </div>
+                </li>
+                <li role="presentation" class="slds-listbox__item">
+                  <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option" aria-selected="false">
+                    <span class="slds-media__figure slds-listbox__option-icon"></span>
+                    <span class="slds-media__body">
+                      <span class="slds-truncate">All Active Cases Past Final Approval</span>
+                    </span>
+                  </div>
+                </li>
+                <li role="presentation" class="slds-listbox__item">
+                  <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option" aria-selected="false">
+                    <span class="slds-media__figure slds-listbox__option-icon"></span>
+                    <span class="slds-media__body">
+                      <span class="slds-truncate">My Cases</span>
+                    </span>
+                  </div>
+                </li>
+                <li role="presentation" class="slds-listbox__item">
+                  <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option" aria-selected="false">
+                    <span class="slds-media__figure slds-listbox__option-icon"></span>
+                    <span class="slds-media__body">
+                      <span class="slds-truncate">My Workbaskets</span>
+                    </span>
+                  </div>
+                </li>
+                <li role="presentation" class="slds-listbox__item">
+                  <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option" aria-selected="false">
+                    <span class="slds-media__figure slds-listbox__option-icon"></span>
+                    <span class="slds-media__body">
+                      <span class="slds-truncate">Recently Viewed (Pinned list)</span>
+                    </span>
+                  </div>
+                </li>
+                <li role="presentation" class="slds-listbox__item">
+                  <div class="slds-listbox__option-header slds-p-horizontal_small" role="presentation">
+                    <span class="slds-text-title_caps">All Other Lists</span>
+                  </div>
+                </li>
+                <li role="presentation" class="slds-listbox__item">
+                  <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option" aria-selected="false">
+                    <span class="slds-media__figure slds-listbox__option-icon"></span>
+                    <span class="slds-media__body">
+                      <span class="slds-truncate">All Active Cases in Final Approval</span>
+                    </span>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
 
           <button class="slds-button slds-button_icon slds-button_icon-border" title="Pin">
@@ -689,9 +807,9 @@
         </header>
 
         <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center default-split-view__meta">
-          <span class="slds-text-body_small default-split-view__meta-text">42 items &bull; Updated just now</span>
+          <span class="slds-text-body_small default-split-view__meta-text">25 items &bull; Updated just now</span>
           <div class="slds-grid default-split-view__meta-actions">
-            <button class="slds-button slds-button_icon" title="Choose columns to display">
+            <button class="slds-button slds-button_icon" title="Choose columns to display" hidden>
               <svg class="slds-button__icon" aria-hidden="true">
                 <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#table_settings"></use>
               </svg>
@@ -729,48 +847,300 @@
           <li class="slds-split-view__list-item" role="presentation">
             <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option" aria-current="page">
               <div class="default-split-view__row">
-                <span class="default-split-view__number">00360733</span>
-                <span class="default-split-view__name">TESTER SAHSHAAB</span>
+                <span class="default-split-view__number">#12345461</span>
+                <span class="default-split-view__name">Carlos Hazzard</span>
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
-                <span>Conditional Approval</span>
-                <span>Active</span>
+                <span>Closed</span>
+                <span class="slds-badge home-badge_active">Active</span>
               </div>
             </a>
           </li>
           <li class="slds-split-view__list-item" role="presentation">
             <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
               <div class="default-split-view__row">
-                <span class="default-split-view__number">00360571</span>
-                <span class="default-split-view__name">MARCUS WEBB</span>
+                <span class="default-split-view__number">#12345460</span>
+                <span class="default-split-view__name">John Stamos</span>
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Intake</span>
-                <span>Active</span>
+                <span class="slds-badge home-badge_active">Active</span>
               </div>
             </a>
           </li>
           <li class="slds-split-view__list-item" role="presentation">
             <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
               <div class="default-split-view__row">
-                <span class="default-split-view__number">00360578</span>
-                <span class="default-split-view__name">SARAH CHEN</span>
-              </div>
-              <div class="default-split-view__row default-split-view__row_secondary">
-                <span>Conditional Approval</span>
-                <span>Active</span>
-              </div>
-            </a>
-          </li>
-          <li class="slds-split-view__list-item" role="presentation">
-            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
-              <div class="default-split-view__row">
-                <span class="default-split-view__number">00360718</span>
-                <span class="default-split-view__name">DAVID PARK</span>
+                <span class="default-split-view__number">#12345462</span>
+                <span class="default-split-view__name">Samual Meisinger</span>
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Intake</span>
-                <span>Pending</span>
+                <span class="slds-badge home-badge_deadline-approaching">Deadline Approaching</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345463</span>
+                <span class="default-split-view__name">Lucas Grant</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Closed</span>
+                <span class="slds-badge home-badge_active">Active</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345464</span>
+                <span class="default-split-view__name">Olivia Nash</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Final Approval</span>
+                <span class="slds-badge home-badge_closed">Closed</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345465</span>
+                <span class="default-split-view__name">Owen Blake</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Conditional Approval</span>
+                <span class="slds-badge home-badge_active">Active</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345466</span>
+                <span class="default-split-view__name">Mia Torres</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Conditional Approval</span>
+                <span class="slds-badge home-badge_deadline-missed">Deadline Missed</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345467</span>
+                <span class="default-split-view__name">Priya Mehta</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Conditional Approval</span>
+                <span class="slds-badge home-badge_active">Active</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345468</span>
+                <span class="default-split-view__name">Nadia Frost</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Closed</span>
+                <span class="slds-badge home-badge_pending">Pending</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345469</span>
+                <span class="default-split-view__name">Caleb Stone</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Intake</span>
+                <span class="slds-badge home-badge_active">Active</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345470</span>
+                <span class="default-split-view__name">Isla Vance</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Closed</span>
+                <span class="slds-badge home-badge_closed">Closed</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345471</span>
+                <span class="default-split-view__name">James Holt</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Closed</span>
+                <span class="slds-badge home-badge_active">Active</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345472</span>
+                <span class="default-split-view__name">Tyler Hayes</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Final Accounting</span>
+                <span class="slds-badge home-badge_under-review">Under Review</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345473</span>
+                <span class="default-split-view__name">Max Okafor</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Intake</span>
+                <span class="slds-badge home-badge_active">Active</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345474</span>
+                <span class="default-split-view__name">Ryan Cho</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Final Accounting</span>
+                <span class="slds-badge home-badge_pending">Pending</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345475</span>
+                <span class="default-split-view__name">Amara Wells</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Project Management</span>
+                <span class="slds-badge home-badge_active">Active</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345476</span>
+                <span class="default-split-view__name">Felix Dunn</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Intake</span>
+                <span class="slds-badge home-badge_closed">Closed</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345477</span>
+                <span class="default-split-view__name">David Park</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Intake</span>
+                <span class="slds-badge home-badge_active">Active</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345478</span>
+                <span class="default-split-view__name">Ethan Cole</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Intake</span>
+                <span class="slds-badge home-badge_under-review">Under Review</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345479</span>
+                <span class="default-split-view__name">Sofia Lund</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Conditional Approval</span>
+                <span class="slds-badge home-badge_active">Active</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345480</span>
+                <span class="default-split-view__name">Marcus Webb</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Conditional Approval</span>
+                <span class="slds-badge home-badge_pending">Pending</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345481</span>
+                <span class="default-split-view__name">Sarah Chen</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Final Accounting</span>
+                <span class="slds-badge home-badge_active">Active</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345482</span>
+                <span class="default-split-view__name">Clara Reeves</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Final Accounting</span>
+                <span class="slds-badge home-badge_closed">Closed</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345483</span>
+                <span class="default-split-view__name">Noah Briggs</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Intake</span>
+                <span class="slds-badge home-badge_active">Active</span>
+              </div>
+            </a>
+          </li>
+          <li class="slds-split-view__list-item" role="presentation">
+            <a href="#" class="slds-split-view__list-item-action slds-grow slds-has-flexi-truncate" role="option">
+              <div class="default-split-view__row">
+                <span class="default-split-view__number">#12345484</span>
+                <span class="default-split-view__name">Leah Kim</span>
+              </div>
+              <div class="default-split-view__row default-split-view__row_secondary">
+                <span>Final Accounting</span>
+                <span class="slds-badge home-badge_under-review">Under Review</span>
               </div>
             </a>
           </li>
@@ -814,7 +1184,7 @@
               </label>
             </div>
           </th>
-          <th scope="col"><div class="home-list-th"><span class="slds-truncate">Label</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
+          <th scope="col"><div class="home-list-th"><span class="slds-truncate">Veteran Name</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
           <th scope="col"><div class="home-list-th"><span class="slds-truncate">Grant Number</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
           <th scope="col"><div class="home-list-th"><span class="slds-truncate">Workbuckets</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
           <th scope="col"><div class="home-list-th"><span class="slds-truncate">Phone Number</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
@@ -2994,6 +3364,45 @@
         if (!trigger.contains(event.target)) {
           trigger.classList.remove('slds-is-open');
         }
+      });
+    });
+
+    document.querySelectorAll('.default-split-view__picker').forEach(function (trigger) {
+      var button = trigger.querySelector('.default-split-view__picker-button');
+      if (!button) return;
+      button.addEventListener('click', function (event) {
+        event.stopPropagation();
+        var isOpen = trigger.classList.toggle('slds-is-open');
+        button.setAttribute('aria-expanded', String(isOpen));
+      });
+      document.addEventListener('click', function (event) {
+        if (!trigger.contains(event.target)) {
+          trigger.classList.remove('slds-is-open');
+          button.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+
+    document.querySelectorAll('.default-split-view__listview-dropdown .slds-listbox__option').forEach(function (option) {
+      option.addEventListener('click', function () {
+        var listbox = option.closest('.slds-listbox');
+        listbox.querySelectorAll('.slds-listbox__option').forEach(function (other) {
+          other.classList.remove('slds-is-selected');
+          other.setAttribute('aria-selected', 'false');
+          var icon = other.querySelector('.slds-listbox__option-icon');
+          if (icon) icon.innerHTML = '';
+        });
+        option.classList.add('slds-is-selected');
+        option.setAttribute('aria-selected', 'true');
+        var icon = option.querySelector('.slds-listbox__option-icon');
+        if (icon) {
+          icon.innerHTML = '<svg class="slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#check"></use></svg>';
+        }
+        var label = option.querySelector('.slds-truncate');
+        var trigger = option.closest('.default-split-view__picker');
+        var titleEl = trigger.querySelector('.default-split-view__picker-button h2');
+        if (label && titleEl) titleEl.textContent = label.textContent;
+        trigger.classList.remove('slds-is-open');
       });
     });
   </script>
