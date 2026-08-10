@@ -479,6 +479,15 @@
       --_slds-c-datatable-row-color-border-hover: var(--slds-g-color-border-1);
     }
 
+    /* Path stages are static info here, not real navigation — pointer-events:
+       none on the item excludes it from hit-testing entirely, so neither the
+       li's hover background nor the link's own :hover/cursor:pointer can
+       ever trigger (unlike a plain hover-color override, which wouldn't
+       stop cursor:pointer from still showing a clickable hand). */
+    .slds-path__nav .slds-path__item {
+      pointer-events: none;
+    }
+
     /* Sibling to the summary-action button (not nested inside it — a
        <button> can't contain another <button>), so it lands at the far
        right of the row since the heading next to it has flex-grow:1. */
@@ -1167,6 +1176,32 @@
               <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#search"></use>
             </svg>
             <input type="search" class="slds-input" placeholder="Search by name, SSN and case number" />
+          </div>
+        </div>
+        <div class="slds-page-header__control">
+          <div class="slds-dropdown-trigger slds-dropdown-trigger_click">
+            <button class="slds-button slds-button_brand action-menu-button" aria-haspopup="true">
+              Action
+              <svg class="slds-button__icon slds-button__icon_right" aria-hidden="true">
+                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#down"></use>
+              </svg>
+            </button>
+            <div class="slds-dropdown slds-dropdown_right">
+              <ul class="slds-dropdown__list" role="menu" aria-label="Action">
+                <li class="slds-dropdown__item" role="presentation">
+                  <a href="#" role="menuitem" tabindex="-1"><span class="slds-truncate">Create a SAH/SHA Grant Application</span></a>
+                </li>
+                <li class="slds-dropdown__item" role="presentation">
+                  <a href="#" role="menuitem" tabindex="-1"><span class="slds-truncate">Create a VR&amp;E</span></a>
+                </li>
+                <li class="slds-dropdown__item" role="presentation">
+                  <a href="#" role="menuitem" tabindex="-1"><span class="slds-truncate">Create New Builder Account</span></a>
+                </li>
+                <li class="slds-dropdown__item" role="presentation">
+                  <a href="#" role="menuitem" tabindex="-1"><span class="slds-truncate">Create New Compliance Inspector</span></a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
