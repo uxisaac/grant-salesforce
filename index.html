@@ -99,6 +99,10 @@
       min-width: 0;
     }
 
+    #main-content {
+      padding-left: 36px;
+    }
+
     /* .slds-split-view__toggle-button is absolutely positioned against this
        container's edge, so the container needs an explicit width — SLDS has
        no token for a specific list-pane width. Only apply it while open: the
@@ -109,6 +113,14 @@
     .app-split-view.slds-is-open {
       width: 20rem;
       flex: 0 0 auto;
+    }
+
+    /* Slightly wider than SLDS's default 0.75rem toggle strip, which felt
+       too thin to comfortably click — inset-inline-end is adjusted to
+       match so it still sits flush against the panel's edge. */
+    .slds-split-view__toggle-button {
+      width: 1.25rem;
+      inset-inline-end: -1.25rem;
     }
 
     /* .slds-scrollable_y only sets max-height:100% + overflow-y:auto — as a
@@ -472,6 +484,16 @@
       display: flex;
       align-items: center;
       gap: var(--slds-g-spacing-1);
+    }
+    .home-list-table th[data-sort-key] {
+      cursor: pointer;
+    }
+    .home-list-table th[data-sort-key]:hover {
+      background-color: var(--slds-s-table-header-color-background-hover);
+    }
+    .home-list-table th[aria-sort="ascending"] .home-list-sort-icon,
+    .home-list-table th[aria-sort="descending"] .home-list-sort-icon {
+      fill: var(--slds-g-color-accent-2);
     }
     .home-list-table th,
     .home-list-table td {
@@ -1243,7 +1265,7 @@
     <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-wrap home-list-header">
       <h2 class="slds-text-heading_medium">150 Items on this list</h2>
       <div class="slds-grid slds-grid_vertical-align-center home-list-controls">
-        <button class="slds-button slds-button_neutral">
+        <button class="slds-button slds-button_neutral" hidden>
           <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
             <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#filter"></use>
           </svg>
@@ -1298,267 +1320,16 @@
               </label>
             </div>
           </th>
-          <th scope="col"><div class="home-list-th"><span class="slds-truncate">Veteran Name</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
-          <th scope="col"><div class="home-list-th"><span class="slds-truncate">Grant Number</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
-          <th scope="col"><div class="home-list-th"><span class="slds-truncate">Workbuckets</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
-          <th scope="col"><div class="home-list-th"><span class="slds-truncate">Phone Number</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
-          <th scope="col"><div class="home-list-th"><span class="slds-truncate">Email</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
-          <th scope="col"><div class="home-list-th"><span class="slds-truncate">Status</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
-          <th scope="col"><div class="home-list-th"><span class="slds-truncate">Region</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
+          <th scope="col" aria-sort="none" data-sort-key="veteranName"><div class="home-list-th"><span class="slds-truncate">Veteran Name</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default home-list-sort-icon" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
+          <th scope="col" aria-sort="none" data-sort-key="grantNumber"><div class="home-list-th"><span class="slds-truncate">Grant Number</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default home-list-sort-icon" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
+          <th scope="col" aria-sort="none" data-sort-key="workbucketNumber"><div class="home-list-th"><span class="slds-truncate">Workbuckets</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default home-list-sort-icon" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
+          <th scope="col" aria-sort="none" data-sort-key="phone"><div class="home-list-th"><span class="slds-truncate">Phone Number</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default home-list-sort-icon" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
+          <th scope="col" aria-sort="none" data-sort-key="email"><div class="home-list-th"><span class="slds-truncate">Email</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default home-list-sort-icon" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
+          <th scope="col" aria-sort="none" data-sort-key="status"><div class="home-list-th"><span class="slds-truncate">Status</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default home-list-sort-icon" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
+          <th scope="col" aria-sort="none" data-sort-key="region"><div class="home-list-th"><span class="slds-truncate">Region</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default home-list-sort-icon" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-1" /><label class="slds-checkbox__label" for="row-select-1"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Carlos Hazzard</span></label></div></td>
-          <td><a href="#">Carlos Hazzard</a></td>
-          <td>#12345461</td>
-          <td>SAH00260733</td>
-          <td>(415) 555-0132</td>
-          <td>carlos.hazzard@gmail.com</td>
-          <td><span class="slds-badge home-badge_active">Active</span></td>
-          <td>North East</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-2" /><label class="slds-checkbox__label" for="row-select-2"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select John Stamos</span></label></div></td>
-          <td><a href="#">John Stamos</a></td>
-          <td>#12345460</td>
-          <td>SAH00260812</td>
-          <td>(619) 123 4567</td>
-          <td>john_stamos@gmail.com</td>
-          <td><span class="slds-badge home-badge_active">Active</span></td>
-          <td>North East</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-3" /><label class="slds-checkbox__label" for="row-select-3"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Samual Meisinger</span></label></div></td>
-          <td><a href="#">Samual Meisinger</a></td>
-          <td>#12345462</td>
-          <td>SAH00261004</td>
-          <td>(503) 555-0187</td>
-          <td>samual.meisinger@gmail.com</td>
-          <td><span class="slds-badge home-badge_deadline-approaching">Deadline Approaching</span></td>
-          <td>South East</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-4" /><label class="slds-checkbox__label" for="row-select-4"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Lucas Grant</span></label></div></td>
-          <td><a href="#">Lucas Grant</a></td>
-          <td>#12345463</td>
-          <td>SAH00261187</td>
-          <td>(206) 555-0143</td>
-          <td>lucas.grant@gmail.com</td>
-          <td><span class="slds-badge home-badge_active">Active</span></td>
-          <td>West</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-5" /><label class="slds-checkbox__label" for="row-select-5"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Olivia Nash</span></label></div></td>
-          <td><a href="#">Olivia Nash</a></td>
-          <td>#12345464</td>
-          <td>SAH00261340</td>
-          <td>(312) 555-0198</td>
-          <td>olivia.nash@gmail.com</td>
-          <td><span class="slds-badge home-badge_closed">Closed</span></td>
-          <td>Midwest</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-6" /><label class="slds-checkbox__label" for="row-select-6"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Owen Blake</span></label></div></td>
-          <td><a href="#">Owen Blake</a></td>
-          <td>#12345465</td>
-          <td>SAH00261502</td>
-          <td>(713) 555-0176</td>
-          <td>owen.blake@gmail.com</td>
-          <td><span class="slds-badge home-badge_active">Active</span></td>
-          <td>Southwest</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-7" /><label class="slds-checkbox__label" for="row-select-7"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Mia Torres</span></label></div></td>
-          <td><a href="#">Mia Torres</a></td>
-          <td>#12345466</td>
-          <td>SAH00261675</td>
-          <td>(602) 555-0154</td>
-          <td>mia.torres@gmail.com</td>
-          <td><span class="slds-badge home-badge_deadline-missed">Deadline Missed</span></td>
-          <td>Southwest</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-8" /><label class="slds-checkbox__label" for="row-select-8"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Priya Mehta</span></label></div></td>
-          <td><a href="#">Priya Mehta</a></td>
-          <td>#12345467</td>
-          <td>SAH00261811</td>
-          <td>(404) 555-0129</td>
-          <td>priya.mehta@gmail.com</td>
-          <td><span class="slds-badge home-badge_active">Active</span></td>
-          <td>South East</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-9" /><label class="slds-checkbox__label" for="row-select-9"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Nadia Frost</span></label></div></td>
-          <td><a href="#">Nadia Frost</a></td>
-          <td>#12345468</td>
-          <td>SAH00261950</td>
-          <td>(206) 555-0188</td>
-          <td>nadia.frost@gmail.com</td>
-          <td><span class="slds-badge home-badge_pending">Pending</span></td>
-          <td>West</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-10" /><label class="slds-checkbox__label" for="row-select-10"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Caleb Stone</span></label></div></td>
-          <td><a href="#">Caleb Stone</a></td>
-          <td>#12345469</td>
-          <td>SAH00262104</td>
-          <td>(617) 555-0112</td>
-          <td>caleb.stone@gmail.com</td>
-          <td><span class="slds-badge home-badge_active">Active</span></td>
-          <td>North East</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-11" /><label class="slds-checkbox__label" for="row-select-11"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Isla Vance</span></label></div></td>
-          <td><a href="#">Isla Vance</a></td>
-          <td>#12345470</td>
-          <td>SAH00262267</td>
-          <td>(503) 555-0167</td>
-          <td>isla.vance@gmail.com</td>
-          <td><span class="slds-badge home-badge_closed">Closed</span></td>
-          <td>Northwest</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-12" /><label class="slds-checkbox__label" for="row-select-12"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select James Holt</span></label></div></td>
-          <td><a href="#">James Holt</a></td>
-          <td>#12345471</td>
-          <td>SAH00262390</td>
-          <td>(214) 555-0145</td>
-          <td>james.holt@gmail.com</td>
-          <td><span class="slds-badge home-badge_active">Active</span></td>
-          <td>South East</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-13" /><label class="slds-checkbox__label" for="row-select-13"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Tyler Hayes</span></label></div></td>
-          <td><a href="#">Tyler Hayes</a></td>
-          <td>#12345472</td>
-          <td>SAH00262533</td>
-          <td>(720) 555-0193</td>
-          <td>tyler.hayes@gmail.com</td>
-          <td><span class="slds-badge home-badge_under-review">Under Review</span></td>
-          <td>Midwest</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-14" /><label class="slds-checkbox__label" for="row-select-14"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Max Okafor</span></label></div></td>
-          <td><a href="#">Max Okafor</a></td>
-          <td>#12345473</td>
-          <td>SAH00262681</td>
-          <td>(305) 555-0121</td>
-          <td>max.okafor@gmail.com</td>
-          <td><span class="slds-badge home-badge_active">Active</span></td>
-          <td>South East</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-15" /><label class="slds-checkbox__label" for="row-select-15"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Ryan Cho</span></label></div></td>
-          <td><a href="#">Ryan Cho</a></td>
-          <td>#12345474</td>
-          <td>SAH00262754</td>
-          <td>(415) 555-0176</td>
-          <td>ryan.cho@gmail.com</td>
-          <td><span class="slds-badge home-badge_pending">Pending</span></td>
-          <td>West</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-16" /><label class="slds-checkbox__label" for="row-select-16"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Amara Wells</span></label></div></td>
-          <td><a href="#">Amara Wells</a></td>
-          <td>#12345475</td>
-          <td>SAH00262899</td>
-          <td>(312) 555-0154</td>
-          <td>amara.wells@gmail.com</td>
-          <td><span class="slds-badge home-badge_active">Active</span></td>
-          <td>Midwest</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-17" /><label class="slds-checkbox__label" for="row-select-17"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Felix Dunn</span></label></div></td>
-          <td><a href="#">Felix Dunn</a></td>
-          <td>#12345476</td>
-          <td>SAH00263021</td>
-          <td>(206) 555-0132</td>
-          <td>felix.dunn@gmail.com</td>
-          <td><span class="slds-badge home-badge_closed">Closed</span></td>
-          <td>Northwest</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-18" /><label class="slds-checkbox__label" for="row-select-18"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select David Park</span></label></div></td>
-          <td><a href="#">David Park</a></td>
-          <td>#12345477</td>
-          <td>SAH00263188</td>
-          <td>(617) 555-0187</td>
-          <td>david.park@gmail.com</td>
-          <td><span class="slds-badge home-badge_active">Active</span></td>
-          <td>North East</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-19" /><label class="slds-checkbox__label" for="row-select-19"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Ethan Cole</span></label></div></td>
-          <td><a href="#">Ethan Cole</a></td>
-          <td>#12345478</td>
-          <td>SAH00263305</td>
-          <td>(713) 555-0143</td>
-          <td>ethan.cole@gmail.com</td>
-          <td><span class="slds-badge home-badge_under-review">Under Review</span></td>
-          <td>Southwest</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-20" /><label class="slds-checkbox__label" for="row-select-20"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Sofia Lund</span></label></div></td>
-          <td><a href="#">Sofia Lund</a></td>
-          <td>#12345479</td>
-          <td>SAH00263447</td>
-          <td>(602) 555-0198</td>
-          <td>sofia.lund@gmail.com</td>
-          <td><span class="slds-badge home-badge_active">Active</span></td>
-          <td>Southwest</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-21" /><label class="slds-checkbox__label" for="row-select-21"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Marcus Webb</span></label></div></td>
-          <td><a href="#">Marcus Webb</a></td>
-          <td>#12345480</td>
-          <td>SAH00263592</td>
-          <td>(404) 555-0176</td>
-          <td>marcus.webb@gmail.com</td>
-          <td><span class="slds-badge home-badge_pending">Pending</span></td>
-          <td>South East</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-22" /><label class="slds-checkbox__label" for="row-select-22"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Sarah Chen</span></label></div></td>
-          <td><a href="#">Sarah Chen</a></td>
-          <td>#12345481</td>
-          <td>SAH00263710</td>
-          <td>(214) 555-0154</td>
-          <td>sarah.chen@gmail.com</td>
-          <td><span class="slds-badge home-badge_active">Active</span></td>
-          <td>South East</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-23" /><label class="slds-checkbox__label" for="row-select-23"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Clara Reeves</span></label></div></td>
-          <td><a href="#">Clara Reeves</a></td>
-          <td>#12345482</td>
-          <td>SAH00263865</td>
-          <td>(720) 555-0121</td>
-          <td>clara.reeves@gmail.com</td>
-          <td><span class="slds-badge home-badge_closed">Closed</span></td>
-          <td>Midwest</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-24" /><label class="slds-checkbox__label" for="row-select-24"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Noah Briggs</span></label></div></td>
-          <td><a href="#">Noah Briggs</a></td>
-          <td>#12345483</td>
-          <td>SAH00263998</td>
-          <td>(305) 555-0193</td>
-          <td>noah.briggs@gmail.com</td>
-          <td><span class="slds-badge home-badge_active">Active</span></td>
-          <td>South East</td>
-        </tr>
-        <tr>
-          <td><div class="slds-checkbox"><input type="checkbox" id="row-select-25" /><label class="slds-checkbox__label" for="row-select-25"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select Leah Kim</span></label></div></td>
-          <td><a href="#">Leah Kim</a></td>
-          <td>#12345484</td>
-          <td>SAH00264102</td>
-          <td>(415) 555-0145</td>
-          <td>leah.kim@gmail.com</td>
-          <td><span class="slds-badge home-badge_under-review">Under Review</span></td>
-          <td>West</td>
-        </tr>
-      </tbody>
+      <tbody class="home-list-tbody"></tbody>
     </table>
 
   </div>
@@ -1570,19 +1341,19 @@
         <div class="slds-page-header__col-title">
           <div class="slds-media">
             <div class="slds-media__figure">
-              <span class="slds-icon_container slds-icon-standard-account" title="Worckbucket">
+              <span class="slds-icon_container slds-icon-standard-account" title="Workbucket">
                 <svg class="slds-icon slds-page-header__icon" aria-hidden="true">
                   <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#offline_briefcase"></use>
                 </svg>
-                <span class="slds-assistive-text">Worckbucket</span>
+                <span class="slds-assistive-text">Workbucket</span>
               </span>
             </div>
             <div class="slds-media__body">
               <div class="slds-page-header__name">
                 <div class="slds-page-header__name-title">
                   <h1>
-                    <span>Worckbucket</span>
-                    <span class="slds-page-header__title slds-truncate" title="SAH00260733">SAH00260733</span>
+                    <span>Workbucket</span>
+                    <span class="slds-page-header__title slds-truncate workbucket-header-number" title="SAH00260733">SAH00260733</span>
                   </h1>
                 </div>
               </div>
@@ -1650,22 +1421,28 @@
           <ul class="slds-page-header__detail-row">
             <li class="slds-page-header__detail-block">
               <dl>
-                <dt class="slds-text-title slds-truncate" title="Grant Status">Grant Status</dt>
-                <dd class="slds-truncate" title="Active">Active</dd>
-              </dl>
-            </li>
-            <li class="slds-page-header__detail-block">
-              <dl>
-                <dt class="slds-text-title slds-truncate" title="Contact Name">Contact Name</dt>
-                <dd class="slds-truncate" title="TESTER SAHSHAAB">
+                <dt class="slds-text-title slds-truncate" title="Veteran Name">Veteran Name</dt>
+                <dd class="slds-truncate workbucket-header-veteran-name" title="TESTER SAHSHAAB">
                   <a href="#">TESTER SAHSHAAB</a>
                 </dd>
               </dl>
             </li>
             <li class="slds-page-header__detail-block">
               <dl>
+                <dt class="slds-text-title slds-truncate" title="Grant Status">Grant Status</dt>
+                <dd class="slds-truncate workbucket-header-status" title="Active">Active</dd>
+              </dl>
+            </li>
+            <li class="slds-page-header__detail-block">
+              <dl>
+                <dt class="slds-text-title slds-truncate" title="Grant Number">Grant Number</dt>
+                <dd class="slds-truncate workbucket-header-grant-number" title="#12345461">#12345461</dd>
+              </dl>
+            </li>
+            <li class="slds-page-header__detail-block">
+              <dl>
                 <dt class="slds-text-title slds-truncate" title="Region">Region</dt>
-                <dd class="slds-truncate" title="Southeast">Southeast</dd>
+                <dd class="slds-truncate workbucket-header-region" title="Southeast">Southeast</dd>
               </dl>
             </li>
             <li class="slds-page-header__detail-block">
@@ -1893,18 +1670,6 @@
                       </tbody>
                     </table>
 
-                    <div class="slds-m-top_medium">
-                      <h3 class="slds-text-heading_small slds-m-bottom_x-small">Notes</h3>
-                      <div class="slds-form-element">
-                        <div class="slds-form-element__control">
-                          <textarea class="slds-textarea" rows="2">Bathroom is 4 feet away from entrance and not 6 feet away. Can we make provisions for this veteran?</textarea>
-                        </div>
-                      </div>
-                      <div class="slds-m-top_x-small slds-text-align_right">
-                        <button class="slds-button slds-button_neutral">Save Note</button>
-                      </div>
-                    </div>
-
                     </div>
                   </div>
                 </section>
@@ -1994,18 +1759,6 @@
                         </tr>
                       </tbody>
                     </table>
-
-                    <div class="slds-m-top_medium">
-                      <h3 class="slds-text-heading_small slds-m-bottom_x-small">Notes</h3>
-                      <div class="slds-form-element">
-                        <div class="slds-form-element__control">
-                          <textarea class="slds-textarea" rows="2">Bathroom is 4 feet away from entrance and not 6 feet away. Can we make provisions for this veteran?</textarea>
-                        </div>
-                      </div>
-                      <div class="slds-m-top_x-small slds-text-align_right">
-                        <button class="slds-button slds-button_neutral">Save Note</button>
-                      </div>
-                    </div>
 
                     </div>
                   </div>
@@ -2101,18 +1854,6 @@
                       </tbody>
                     </table>
 
-                    <div class="slds-m-top_medium">
-                      <h3 class="slds-text-heading_small slds-m-bottom_x-small">Notes</h3>
-                      <div class="slds-form-element">
-                        <div class="slds-form-element__control">
-                          <textarea class="slds-textarea" rows="2">Bathroom is 4 feet away from entrance and not 6 feet away. Can we make provisions for this veteran?</textarea>
-                        </div>
-                      </div>
-                      <div class="slds-m-top_x-small slds-text-align_right">
-                        <button class="slds-button slds-button_neutral">Save Note</button>
-                      </div>
-                    </div>
-
                     </div>
                   </div>
                 </section>
@@ -2203,18 +1944,6 @@
                       </tbody>
                     </table>
 
-                    <div class="slds-m-top_medium">
-                      <h3 class="slds-text-heading_small slds-m-bottom_x-small">Notes</h3>
-                      <div class="slds-form-element">
-                        <div class="slds-form-element__control">
-                          <textarea class="slds-textarea" rows="2">Bathroom is 4 feet away from entrance and not 6 feet away. Can we make provisions for this veteran?</textarea>
-                        </div>
-                      </div>
-                      <div class="slds-m-top_x-small slds-text-align_right">
-                        <button class="slds-button slds-button_neutral">Save Note</button>
-                      </div>
-                    </div>
-
                     </div>
                   </div>
                 </section>
@@ -2304,18 +2033,6 @@
                         </tr>
                       </tbody>
                     </table>
-
-                    <div class="slds-m-top_medium">
-                      <h3 class="slds-text-heading_small slds-m-bottom_x-small">Notes</h3>
-                      <div class="slds-form-element">
-                        <div class="slds-form-element__control">
-                          <textarea class="slds-textarea" rows="2">Bathroom is 4 feet away from entrance and not 6 feet away. Can we make provisions for this veteran?</textarea>
-                        </div>
-                      </div>
-                      <div class="slds-m-top_x-small slds-text-align_right">
-                        <button class="slds-button slds-button_neutral">Save Note</button>
-                      </div>
-                    </div>
 
                     </div>
                   </div>
@@ -2441,7 +2158,7 @@
                   <svg class="slds-icon slds-icon_xx-small slds-icon-text-default slds-input__icon slds-input__icon_left" aria-hidden="true">
                     <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#search"></use>
                   </svg>
-                  <input type="search" class="slds-input" placeholder="Search John Stamos..." />
+                  <input type="search" class="slds-input veteran-info-search-input" placeholder="Search John Stamos..." />
                 </div>
               </div>
             </div>
@@ -2451,7 +2168,7 @@
               <div class="veteran-details-grid__col">
                 <dl>
                   <dt class="slds-text-title">Name</dt>
-                  <dd>John Stamos</dd>
+                  <dd class="veteran-info-name-value">John Stamos</dd>
                 </dl>
                 <dl>
                   <dt class="slds-text-title">Spr Record Type</dt>
@@ -2616,7 +2333,7 @@
                 <li class="slds-page-header__detail-block">
                   <dl>
                     <dt class="slds-text-title slds-truncate" title="Workbucket Number">Workbucket Number</dt>
-                    <dd class="slds-truncate">#12345467</dd>
+                    <dd class="slds-truncate grant-details-workbucket-number">#12345467</dd>
                   </dl>
                 </li>
                 <li class="slds-page-header__detail-block">
@@ -2817,13 +2534,13 @@
             <li class="slds-page-header__detail-block">
               <dl>
                 <dt class="slds-text-title slds-truncate" title="Workbucket Number">Workbucket Number</dt>
-                <dd class="slds-truncate" title="SAH00260733">SAH00260733</dd>
+                <dd class="slds-truncate task-claim-review-workbucket-number" title="SAH00260733">SAH00260733</dd>
               </dl>
             </li>
             <li class="slds-page-header__detail-block">
               <dl>
                 <dt class="slds-text-title slds-truncate" title="Veteran Name">Veteran Name</dt>
-                <dd class="slds-truncate" title="John Stamos">John Stamos</dd>
+                <dd class="slds-truncate task-claim-review-veteran-name" title="John Stamos">John Stamos</dd>
               </dl>
             </li>
           </ul>
@@ -3532,9 +3249,164 @@
       });
     });
 
+    var veteranHeaderLink = document.querySelector('.workbucket-header-veteran-name a');
+    if (veteranHeaderLink) {
+      veteranHeaderLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        var veteranInfoTab = document.getElementById('tab-veteran-info');
+        if (veteranInfoTab) veteranInfoTab.click();
+      });
+    }
+
     (function () {
       var navTabList = document.querySelector('.slds-context-bar__secondary ul.slds-grid');
       if (!navTabList) return;
+
+      // Single source of truth for the Home list: each record renders one
+      // row in the table below AND drives the header of whichever
+      // Workbucket tab points back to it (see renderWorkbucketHeader).
+      var homeListRecords = [
+        { veteranName: 'Carlos Hazzard', grantNumber: '#12345461', workbucketNumber: 'SAH00260733', phone: '(415) 555-0132', email: 'carlos.hazzard@gmail.com', status: 'Active', statusClass: 'active', region: 'North East' },
+        { veteranName: 'John Stamos', grantNumber: '#12345460', workbucketNumber: 'SAH00260812', phone: '(619) 123 4567', email: 'john_stamos@gmail.com', status: 'Active', statusClass: 'active', region: 'North East' },
+        { veteranName: 'Samual Meisinger', grantNumber: '#12345462', workbucketNumber: 'SAH00261004', phone: '(503) 555-0187', email: 'samual.meisinger@gmail.com', status: 'Deadline Approaching', statusClass: 'deadline-approaching', region: 'South East' },
+        { veteranName: 'Lucas Grant', grantNumber: '#12345463', workbucketNumber: 'SAH00261187', phone: '(206) 555-0143', email: 'lucas.grant@gmail.com', status: 'Active', statusClass: 'active', region: 'West' },
+        { veteranName: 'Olivia Nash', grantNumber: '#12345464', workbucketNumber: 'SAH00261340', phone: '(312) 555-0198', email: 'olivia.nash@gmail.com', status: 'Closed', statusClass: 'closed', region: 'Midwest' },
+        { veteranName: 'Owen Blake', grantNumber: '#12345465', workbucketNumber: 'SAH00261502', phone: '(713) 555-0176', email: 'owen.blake@gmail.com', status: 'Active', statusClass: 'active', region: 'Southwest' },
+        { veteranName: 'Mia Torres', grantNumber: '#12345466', workbucketNumber: 'SAH00261675', phone: '(602) 555-0154', email: 'mia.torres@gmail.com', status: 'Deadline Missed', statusClass: 'deadline-missed', region: 'Southwest' },
+        { veteranName: 'Priya Mehta', grantNumber: '#12345467', workbucketNumber: 'SAH00261811', phone: '(404) 555-0129', email: 'priya.mehta@gmail.com', status: 'Active', statusClass: 'active', region: 'South East' },
+        { veteranName: 'Nadia Frost', grantNumber: '#12345468', workbucketNumber: 'SAH00261950', phone: '(206) 555-0188', email: 'nadia.frost@gmail.com', status: 'Pending', statusClass: 'pending', region: 'West' },
+        { veteranName: 'Caleb Stone', grantNumber: '#12345469', workbucketNumber: 'SAH00262104', phone: '(617) 555-0112', email: 'caleb.stone@gmail.com', status: 'Active', statusClass: 'active', region: 'North East' },
+        { veteranName: 'Isla Vance', grantNumber: '#12345470', workbucketNumber: 'SAH00262267', phone: '(503) 555-0167', email: 'isla.vance@gmail.com', status: 'Closed', statusClass: 'closed', region: 'Northwest' },
+        { veteranName: 'James Holt', grantNumber: '#12345471', workbucketNumber: 'SAH00262390', phone: '(214) 555-0145', email: 'james.holt@gmail.com', status: 'Active', statusClass: 'active', region: 'South East' },
+        { veteranName: 'Tyler Hayes', grantNumber: '#12345472', workbucketNumber: 'SAH00262533', phone: '(720) 555-0193', email: 'tyler.hayes@gmail.com', status: 'Under Review', statusClass: 'under-review', region: 'Midwest' },
+        { veteranName: 'Max Okafor', grantNumber: '#12345473', workbucketNumber: 'SAH00262681', phone: '(305) 555-0121', email: 'max.okafor@gmail.com', status: 'Active', statusClass: 'active', region: 'South East' },
+        { veteranName: 'Ryan Cho', grantNumber: '#12345474', workbucketNumber: 'SAH00262754', phone: '(415) 555-0176', email: 'ryan.cho@gmail.com', status: 'Pending', statusClass: 'pending', region: 'West' },
+        { veteranName: 'Amara Wells', grantNumber: '#12345475', workbucketNumber: 'SAH00262899', phone: '(312) 555-0154', email: 'amara.wells@gmail.com', status: 'Active', statusClass: 'active', region: 'Midwest' },
+        { veteranName: 'Felix Dunn', grantNumber: '#12345476', workbucketNumber: 'SAH00263021', phone: '(206) 555-0132', email: 'felix.dunn@gmail.com', status: 'Closed', statusClass: 'closed', region: 'Northwest' },
+        { veteranName: 'David Park', grantNumber: '#12345477', workbucketNumber: 'SAH00263188', phone: '(617) 555-0187', email: 'david.park@gmail.com', status: 'Active', statusClass: 'active', region: 'North East' },
+        { veteranName: 'Ethan Cole', grantNumber: '#12345478', workbucketNumber: 'SAH00263305', phone: '(713) 555-0143', email: 'ethan.cole@gmail.com', status: 'Under Review', statusClass: 'under-review', region: 'Southwest' },
+        { veteranName: 'Sofia Lund', grantNumber: '#12345479', workbucketNumber: 'SAH00263447', phone: '(602) 555-0198', email: 'sofia.lund@gmail.com', status: 'Active', statusClass: 'active', region: 'Southwest' },
+        { veteranName: 'Marcus Webb', grantNumber: '#12345480', workbucketNumber: 'SAH00263592', phone: '(404) 555-0176', email: 'marcus.webb@gmail.com', status: 'Pending', statusClass: 'pending', region: 'South East' },
+        { veteranName: 'Sarah Chen', grantNumber: '#12345481', workbucketNumber: 'SAH00263710', phone: '(214) 555-0154', email: 'sarah.chen@gmail.com', status: 'Active', statusClass: 'active', region: 'South East' },
+        { veteranName: 'Clara Reeves', grantNumber: '#12345482', workbucketNumber: 'SAH00263865', phone: '(720) 555-0121', email: 'clara.reeves@gmail.com', status: 'Closed', statusClass: 'closed', region: 'Midwest' },
+        { veteranName: 'Noah Briggs', grantNumber: '#12345483', workbucketNumber: 'SAH00263998', phone: '(305) 555-0193', email: 'noah.briggs@gmail.com', status: 'Active', statusClass: 'active', region: 'South East' },
+        { veteranName: 'Leah Kim', grantNumber: '#12345484', workbucketNumber: 'SAH00264102', phone: '(415) 555-0145', email: 'leah.kim@gmail.com', status: 'Under Review', statusClass: 'under-review', region: 'West' }
+      ];
+
+      function renderHomeListTable() {
+        var tbody = document.querySelector('.home-list-tbody');
+        if (!tbody) return;
+        tbody.innerHTML = homeListRecords.map(function (record, index) {
+          var rowNum = index + 1;
+          return (
+            '<tr data-workbucket-number="' + record.workbucketNumber + '">' +
+              '<td><div class="slds-checkbox"><input type="checkbox" id="row-select-' + rowNum + '" /><label class="slds-checkbox__label" for="row-select-' + rowNum + '"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select ' + record.veteranName + '</span></label></div></td>' +
+              '<td><a href="#">' + record.veteranName + '</a></td>' +
+              '<td>' + record.grantNumber + '</td>' +
+              '<td>' + record.workbucketNumber + '</td>' +
+              '<td>' + record.phone + '</td>' +
+              '<td>' + record.email + '</td>' +
+              '<td><span class="slds-badge home-badge_' + record.statusClass + '">' + record.status + '</span></td>' +
+              '<td>' + record.region + '</td>' +
+            '</tr>'
+          );
+        }).join('');
+      }
+
+      renderHomeListTable();
+
+      var currentSort = { key: null, direction: 'ascending' };
+
+      function sortHomeListTable(key) {
+        if (currentSort.key === key) {
+          currentSort.direction = currentSort.direction === 'ascending' ? 'descending' : 'ascending';
+        } else {
+          currentSort = { key: key, direction: 'ascending' };
+        }
+
+        homeListRecords.sort(function (a, b) {
+          var result = String(a[key]).localeCompare(String(b[key]), undefined, { numeric: true });
+          return currentSort.direction === 'ascending' ? result : -result;
+        });
+
+        renderHomeListTable();
+
+        document.querySelectorAll('.home-list-table th[data-sort-key]').forEach(function (th) {
+          var isActive = th.getAttribute('data-sort-key') === key;
+          th.setAttribute('aria-sort', isActive ? currentSort.direction : 'none');
+          var icon = th.querySelector('.home-list-sort-icon use');
+          if (icon) {
+            var iconName = isActive && currentSort.direction === 'ascending' ? 'chevronup' : 'chevrondown';
+            icon.setAttribute('xlink:href', 'assets/icons/utility-sprite/svg/symbols.svg#' + iconName);
+          }
+        });
+      }
+
+      document.querySelectorAll('.home-list-table th[data-sort-key]').forEach(function (th) {
+        th.addEventListener('click', function () {
+          sortHomeListTable(th.getAttribute('data-sort-key'));
+        });
+      });
+
+      var currentWorkbucketRecord = null;
+
+      function renderWorkbucketHeader(record) {
+        var view = document.getElementById('view-workbucket');
+        if (!view || !record) return;
+        currentWorkbucketRecord = record;
+
+        var numberEl = view.querySelector('.workbucket-header-number');
+        if (numberEl) {
+          numberEl.textContent = record.workbucketNumber;
+          numberEl.title = record.workbucketNumber;
+        }
+        var statusEl = view.querySelector('.workbucket-header-status');
+        if (statusEl) {
+          statusEl.textContent = record.status;
+          statusEl.title = record.status;
+        }
+        var veteranEl = view.querySelector('.workbucket-header-veteran-name');
+        if (veteranEl) {
+          veteranEl.title = record.veteranName;
+          var veteranLink = veteranEl.querySelector('a');
+          if (veteranLink) veteranLink.textContent = record.veteranName;
+        }
+        var grantNumberEl = view.querySelector('.workbucket-header-grant-number');
+        if (grantNumberEl) {
+          grantNumberEl.textContent = record.grantNumber;
+          grantNumberEl.title = record.grantNumber;
+        }
+        var regionEl = view.querySelector('.workbucket-header-region');
+        if (regionEl) {
+          regionEl.textContent = record.region;
+          regionEl.title = record.region;
+        }
+
+        // Veteran Info tab
+        var searchInput = view.querySelector('.veteran-info-search-input');
+        if (searchInput) searchInput.placeholder = 'Search ' + record.veteranName + '...';
+        var veteranNameValue = view.querySelector('.veteran-info-name-value');
+        if (veteranNameValue) veteranNameValue.textContent = record.veteranName;
+
+        // Grant Details > Case Information tab
+        var grantDetailsNumberEl = view.querySelector('.grant-details-workbucket-number');
+        if (grantDetailsNumberEl) grantDetailsNumberEl.textContent = record.workbucketNumber;
+      }
+
+      function renderTaskClaimReviewHeader(record) {
+        var view = document.getElementById('view-task-claim-review');
+        if (!view || !record) return;
+        var numberEl = view.querySelector('.task-claim-review-workbucket-number');
+        if (numberEl) {
+          numberEl.textContent = record.workbucketNumber;
+          numberEl.title = record.workbucketNumber;
+        }
+        var veteranEl = view.querySelector('.task-claim-review-veteran-name');
+        if (veteranEl) {
+          veteranEl.textContent = record.veteranName;
+          veteranEl.title = record.veteranName;
+        }
+      }
 
       function activateNavTab(li) {
         navTabList.querySelectorAll(':scope > .slds-context-bar__item_tab').forEach(function (item) {
@@ -3548,6 +3420,16 @@
         if (viewId) {
           document.querySelectorAll('.app-view').forEach(function (view) {
             view.hidden = view.id !== viewId;
+          });
+        }
+
+        if (viewId === 'view-workbucket' && li.dataset.workbucketNumber) {
+          renderWorkbucketHeader({
+            veteranName: li.dataset.veteranName,
+            grantNumber: li.dataset.grantNumber,
+            workbucketNumber: li.dataset.workbucketNumber,
+            status: li.dataset.status,
+            region: li.dataset.region
           });
         }
       }
@@ -3574,9 +3456,23 @@
 
       navTabList.querySelectorAll(':scope > .slds-context-bar__item_tab').forEach(wireNavTab);
 
+      var appNameLink = document.querySelector('.slds-context-bar__app-name');
+      if (appNameLink) {
+        appNameLink.addEventListener('click', function (event) {
+          event.preventDefault();
+          var homeTab = navTabList.querySelector('[data-view-id="view-home"]');
+          if (!homeTab) return;
+          activateNavTab(homeTab);
+          var homeLink = homeTab.querySelector('.slds-context-bar__label-action');
+          if (homeLink) homeLink.focus();
+        });
+      }
+
       document.querySelectorAll('.checklist-open-tab').forEach(function (button) {
         button.addEventListener('click', function () {
           var name = button.getAttribute('data-item-name');
+          if (name === 'Claim Review') renderTaskClaimReviewHeader(currentWorkbucketRecord);
+
           var existing = navTabList.querySelector('[data-checklist-tab="' + name + '"]');
           if (existing) {
             activateNavTab(existing);
@@ -3621,8 +3517,8 @@
         });
       });
 
-      function openWorkbucketTab() {
-        var existing = navTabList.querySelector('[data-view-id="view-workbucket"]');
+      function openWorkbucketTab(record) {
+        var existing = navTabList.querySelector('[data-view-id="view-workbucket"][data-workbucket-number="' + record.workbucketNumber + '"]');
         if (existing) {
           activateNavTab(existing);
           return;
@@ -3633,23 +3529,28 @@
         var li = document.createElement('li');
         li.className = 'slds-context-bar__item slds-context-bar__item_tab';
         li.setAttribute('data-view-id', 'view-workbucket');
+        li.dataset.veteranName = record.veteranName;
+        li.dataset.grantNumber = record.grantNumber;
+        li.dataset.workbucketNumber = record.workbucketNumber;
+        li.dataset.status = record.status;
+        li.dataset.region = record.region;
         li.innerHTML =
           '<a href="#" class="slds-context-bar__label-action" aria-current="false">' +
             '<span class="slds-icon_container">' +
               '<svg class="slds-icon slds-icon_small" aria-hidden="true">' +
                 '<use xlink:href="assets/icons/standard-sprite/svg/symbols.svg#account"></use>' +
               '</svg>' +
-              '<span class="slds-assistive-text">Worckbucket</span>' +
+              '<span class="slds-assistive-text">Workbucket</span>' +
             '</span>' +
-            '<span class="slds-truncate">SAH00260733</span>' +
+            '<span class="slds-truncate">' + record.workbucketNumber + '</span>' +
             '<span class="slds-assistive-text">Current Page:</span>' +
           '</a>' +
           '<div class="slds-context-bar__icon-action slds-col_bump-left">' +
-            '<button class="slds-button slds-button_icon slds-button_icon-container slds-context-bar__button" title="Close SAH00260733">' +
+            '<button class="slds-button slds-button_icon slds-button_icon-container slds-context-bar__button" title="Close ' + record.workbucketNumber + '">' +
               '<svg class="slds-button__icon" aria-hidden="true">' +
                 '<use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#close"></use>' +
               '</svg>' +
-              '<span class="slds-assistive-text">Close SAH00260733</span>' +
+              '<span class="slds-assistive-text">Close ' + record.workbucketNumber + '</span>' +
             '</button>' +
           '</div>';
 
@@ -3663,11 +3564,36 @@
         activateNavTab(li);
       }
 
-      document.querySelectorAll('.home-list-table tbody tr').forEach(function (row) {
-        row.addEventListener('click', function (event) {
+      var homeListTbody = document.querySelector('.home-list-tbody');
+      if (homeListTbody) {
+        homeListTbody.addEventListener('click', function (event) {
           if (event.target.closest('.slds-checkbox')) return;
+          var row = event.target.closest('tr');
+          if (!row) return;
           event.preventDefault();
-          openWorkbucketTab();
+          var record = homeListRecords.filter(function (r) {
+            return r.workbucketNumber === row.getAttribute('data-workbucket-number');
+          })[0];
+          if (record) openWorkbucketTab(record);
+        });
+      }
+
+      document.querySelectorAll('.slds-split-view__list-item-action').forEach(function (link) {
+        link.addEventListener('click', function (event) {
+          event.preventDefault();
+          var numberEl = link.querySelector('.default-split-view__number');
+          if (!numberEl) return;
+          var grantNumber = numberEl.textContent.trim();
+          var record = homeListRecords.filter(function (r) {
+            return r.grantNumber === grantNumber;
+          })[0];
+          if (!record) return;
+
+          document.querySelectorAll('.slds-split-view__list-item-action').forEach(function (other) {
+            other.setAttribute('aria-current', other === link ? 'page' : 'false');
+          });
+
+          openWorkbucketTab(record);
         });
       });
     })();
