@@ -99,6 +99,20 @@
       min-width: 0;
     }
 
+    /* Same flex min-width:auto issue as above, applied to the open-tab
+       strip: .slds-context-bar__item_tab has a fixed width:12.5rem with no
+       min-width override, so with several record tabs open the <ul> just
+       grew past the available width instead of shrinking. min-width:0 on
+       both the list and each tab lets them shrink and truncate (via the
+       existing .slds-truncate label) to fit the viewport no matter how
+       many tabs are open, instead of overflowing the page. */
+    .slds-context-bar__secondary > ul.slds-grid {
+      min-width: 0;
+    }
+    .slds-context-bar__item_tab {
+      min-width: 0;
+    }
+
     #main-content {
       padding-left: 36px;
     }
@@ -3542,15 +3556,15 @@
               '</svg>' +
               '<span class="slds-assistive-text">Workbucket</span>' +
             '</span>' +
-            '<span class="slds-truncate">' + record.workbucketNumber + '</span>' +
+            '<span class="slds-truncate">' + record.veteranName + ' - ' + record.workbucketNumber + '</span>' +
             '<span class="slds-assistive-text">Current Page:</span>' +
           '</a>' +
           '<div class="slds-context-bar__icon-action slds-col_bump-left">' +
-            '<button class="slds-button slds-button_icon slds-button_icon-container slds-context-bar__button" title="Close ' + record.workbucketNumber + '">' +
+            '<button class="slds-button slds-button_icon slds-button_icon-container slds-context-bar__button" title="Close ' + record.veteranName + ' - ' + record.workbucketNumber + '">' +
               '<svg class="slds-button__icon" aria-hidden="true">' +
                 '<use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#close"></use>' +
               '</svg>' +
-              '<span class="slds-assistive-text">Close ' + record.workbucketNumber + '</span>' +
+              '<span class="slds-assistive-text">Close ' + record.veteranName + ' - ' + record.workbucketNumber + '</span>' +
             '</button>' +
           '</div>';
 
