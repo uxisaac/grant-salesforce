@@ -65,6 +65,33 @@
       background-color: transparent;
     }
 
+    /* Grant Details' fields as two side-by-side columns instead of one,
+       matching the Veteran Info panel's layout — same .slds-page-header__
+       detail-row / detail-block / dl markup as elsewhere in the file, just
+       split across two flex items instead of one wrapping row. This also
+       fixes the same overflow the base flex:nowrap row caused once it no
+       longer had full page width to work with (the narrow sidebar card). */
+    .grant-details-columns {
+      display: flex;
+      gap: var(--slds-g-spacing-9);
+      flex-wrap: wrap;
+    }
+    .grant-details-columns .slds-page-header__detail-row {
+      flex: 1 1 10rem;
+      min-width: 0;
+      flex-direction: column;
+      row-gap: var(--slds-g-spacing-3);
+    }
+    /* .slds-page-header__detail-block's max-width:25% assumes it's one of
+       ~4 items in a horizontal row — stacked vertically in a narrow column
+       instead, that resolves to a sliver of the column's width and
+       truncated every field down to a couple of characters. */
+    .grant-details-columns .slds-page-header__detail-block {
+      max-width: 100%;
+      padding-inline-start: 0;
+      padding-inline-end: 0;
+    }
+
     /* Empty placeholder card has no content to give it height — SLDS has no
        token for an arbitrary content-area size, so this is a plain value. */
     .slds-card__body_inner {
@@ -82,11 +109,22 @@
        remaining viewport height below the fixed header and the nav console.
        This must be a definite `height`, not `min-height` — the split-view
        panel's own CSS sets height:100%, which only resolves against a
-       definite parent height, so min-height alone left it collapsed. */
+       definite parent height, so min-height alone left it collapsed.
+       --subtabs-bar-height is written by syncSubTabsBarHeightVar() (0 when
+       the sub-tabs row is hidden) so this stays correct in both states
+       without a separate hardcoded height or a body-level state class. */
     .app-body-layout {
       display: flex;
       align-items: stretch;
-      height: calc(100vh - var(--slds-s-header-sizing-height, 3.125rem) - var(--slds-s-navigation-sizing-height, 2.5rem));
+      height: calc(100vh - var(--slds-s-header-sizing-height, 3.125rem) - var(--slds-s-navigation-sizing-height, 2.5rem) - var(--subtabs-bar-height, 0px));
+    }
+
+    /* Base SLDS gives .slds-tabs_default__item no display value beyond
+       position:relative, so it can't lay out a label link + close button
+       side by side the way the top-level context-bar tabs do. */
+    .slds-sub-tabs__item {
+      display: flex;
+      align-items: center;
     }
 
     /* Flex items default to min-width:auto, so this main pane refused to
@@ -115,6 +153,16 @@
 
     #main-content {
       padding-left: 36px;
+    }
+
+    /* Same flex min-width:auto issue as above, applied to the checklist /
+       details two-column layout: .slds-col is flex:1 1 auto with no
+       min-width override, so the checklist column refused to shrink below
+       the Task Outcomes table's intrinsic width once it dropped from full
+       width to 2/3 width, overflowing the page instead of letting the
+       table's own overflow-x:auto scroll contain it. */
+    .slds-col {
+      min-width: 0;
     }
 
     /* .slds-split-view__toggle-button is absolutely positioned against this
@@ -390,6 +438,15 @@
       padding-bottom: var(--slds-g-spacing-4);
     }
 
+    /* Checklist rows are now a static list — .slds-accordion__summary-action
+       is no longer a <button>, but its base SLDS hover/focus color change
+       still applies by class alone, which would misleadingly suggest the
+       row is still clickable. */
+    .slds-accordion__summary-action:hover,
+    .slds-accordion__summary-action:focus {
+      color: inherit;
+    }
+
     .checklist-action-row {
       display: flex;
       align-items: center;
@@ -447,12 +504,6 @@
     }
     .veteran-subnav__pill:not(.veteran-subnav__pill_active) {
       color: var(--slds-g-color-on-surface-2);
-    }
-    .veteran-subnav__search {
-      flex-shrink: 0;
-    }
-    .veteran-subnav__search .slds-input {
-      border-radius: var(--slds-g-radius-border-pill);
     }
 
     /* Two independent flowing columns rather than a single CSS grid — a
@@ -814,6 +865,12 @@
           </li>
         </ul>
       </nav>
+    </div>
+
+    <div class="slds-sub-tabs" hidden>
+      <div class="slds-tabs_default">
+        <ul class="slds-tabs_default__nav" role="tablist"></ul>
+      </div>
     </div>
   </div>
 
@@ -1479,103 +1536,99 @@
           </ul>
         </div>
       </div>
-    </div>
 
-    <div class="slds-card slds-m-top_medium">
-      <div class="slds-card__body slds-card__body_inner">
-
-        <div class="slds-path">
-          <div class="slds-grid slds-path__track">
-            <div class="slds-grid slds-path__scroller-container">
-              <div class="slds-path__scroller">
-                <div class="slds-path__scroller_inner">
-                  <ul class="slds-path__nav" role="listbox" aria-orientation="horizontal">
-                    <li class="slds-path__item slds-is-active slds-is-current" role="presentation">
-                      <a aria-selected="true" class="slds-path__link" href="#" role="option" tabindex="0">
-                        <span class="slds-path__stage">
-                          <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
-                            <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#check"></use>
-                          </svg>
-                          <span class="slds-assistive-text">Current Stage:</span>
-                        </span>
-                        <span class="slds-path__title">Intake</span>
-                      </a>
-                    </li>
-                    <li class="slds-path__item slds-is-incomplete" role="presentation">
-                      <a aria-selected="false" class="slds-path__link" href="#" role="option" tabindex="-1">
-                        <span class="slds-path__stage">
-                          <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
-                            <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#check"></use>
-                          </svg>
-                          <span class="slds-assistive-text">Stage: </span>
-                        </span>
-                        <span class="slds-path__title">Conditional Approval</span>
-                      </a>
-                    </li>
-                    <li class="slds-path__item slds-is-incomplete" role="presentation">
-                      <a aria-selected="false" class="slds-path__link" href="#" role="option" tabindex="-1">
-                        <span class="slds-path__stage">
-                          <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
-                            <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#check"></use>
-                          </svg>
-                          <span class="slds-assistive-text">Stage: </span>
-                        </span>
-                        <span class="slds-path__title">Final Approval</span>
-                      </a>
-                    </li>
-                    <li class="slds-path__item slds-is-incomplete" role="presentation">
-                      <a aria-selected="false" class="slds-path__link" href="#" role="option" tabindex="-1">
-                        <span class="slds-path__stage">
-                          <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
-                            <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#check"></use>
-                          </svg>
-                          <span class="slds-assistive-text">Stage: </span>
-                        </span>
-                        <span class="slds-path__title">Project Management</span>
-                      </a>
-                    </li>
-                    <li class="slds-path__item slds-is-incomplete" role="presentation">
-                      <a aria-selected="false" class="slds-path__link" href="#" role="option" tabindex="-1">
-                        <span class="slds-path__stage">
-                          <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
-                            <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#check"></use>
-                          </svg>
-                          <span class="slds-assistive-text">Stage: </span>
-                        </span>
-                        <span class="slds-path__title">Final Accounting</span>
-                      </a>
-                    </li>
-                    <li class="slds-path__item slds-is-incomplete" role="presentation">
-                      <a aria-selected="false" class="slds-path__link" href="#" role="option" tabindex="-1">
-                        <span class="slds-path__stage">
-                          <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
-                            <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#check"></use>
-                          </svg>
-                          <span class="slds-assistive-text">Stage: </span>
-                        </span>
-                        <span class="slds-path__title">Closed</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
+      <div class="slds-path slds-p-top_medium">
+        <div class="slds-grid slds-path__track">
+          <div class="slds-grid slds-path__scroller-container">
+            <div class="slds-path__scroller">
+              <div class="slds-path__scroller_inner">
+                <ul class="slds-path__nav" role="listbox" aria-orientation="horizontal">
+                  <li class="slds-path__item slds-is-active slds-is-current" role="presentation">
+                    <a aria-selected="true" class="slds-path__link" href="#" role="option" tabindex="0">
+                      <span class="slds-path__stage">
+                        <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                          <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#check"></use>
+                        </svg>
+                        <span class="slds-assistive-text">Current Stage:</span>
+                      </span>
+                      <span class="slds-path__title">Intake</span>
+                    </a>
+                  </li>
+                  <li class="slds-path__item slds-is-incomplete" role="presentation">
+                    <a aria-selected="false" class="slds-path__link" href="#" role="option" tabindex="-1">
+                      <span class="slds-path__stage">
+                        <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                          <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#check"></use>
+                        </svg>
+                        <span class="slds-assistive-text">Stage: </span>
+                      </span>
+                      <span class="slds-path__title">Conditional Approval</span>
+                    </a>
+                  </li>
+                  <li class="slds-path__item slds-is-incomplete" role="presentation">
+                    <a aria-selected="false" class="slds-path__link" href="#" role="option" tabindex="-1">
+                      <span class="slds-path__stage">
+                        <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                          <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#check"></use>
+                        </svg>
+                        <span class="slds-assistive-text">Stage: </span>
+                      </span>
+                      <span class="slds-path__title">Final Approval</span>
+                    </a>
+                  </li>
+                  <li class="slds-path__item slds-is-incomplete" role="presentation">
+                    <a aria-selected="false" class="slds-path__link" href="#" role="option" tabindex="-1">
+                      <span class="slds-path__stage">
+                        <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                          <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#check"></use>
+                        </svg>
+                        <span class="slds-assistive-text">Stage: </span>
+                      </span>
+                      <span class="slds-path__title">Project Management</span>
+                    </a>
+                  </li>
+                  <li class="slds-path__item slds-is-incomplete" role="presentation">
+                    <a aria-selected="false" class="slds-path__link" href="#" role="option" tabindex="-1">
+                      <span class="slds-path__stage">
+                        <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                          <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#check"></use>
+                        </svg>
+                        <span class="slds-assistive-text">Stage: </span>
+                      </span>
+                      <span class="slds-path__title">Final Accounting</span>
+                    </a>
+                  </li>
+                  <li class="slds-path__item slds-is-incomplete" role="presentation">
+                    <a aria-selected="false" class="slds-path__link" href="#" role="option" tabindex="-1">
+                      <span class="slds-path__stage">
+                        <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                          <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#check"></use>
+                        </svg>
+                        <span class="slds-assistive-text">Stage: </span>
+                      </span>
+                      <span class="slds-path__title">Closed</span>
+                    </a>
+                  </li>
+                </ul>
               </div>
             </div>
-            <div class="slds-grid slds-path__action">
-              <span class="slds-path__stage-name">Intake</span>
-            </div>
+          </div>
+          <div class="slds-grid slds-path__action">
+            <span class="slds-path__stage-name">Intake</span>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-gutters slds-m-top_medium">
+      <div class="slds-col slds-size_2-of-3">
+    <div class="slds-card">
+      <div class="slds-card__body slds-card__body_inner">
 
         <div class="slds-tabs_default slds-m-top_large">
           <ul class="slds-tabs_default__nav" role="tablist">
             <li class="slds-tabs_default__item slds-is-active" title="Checklist" role="presentation">
               <a class="slds-tabs_default__link" href="#" role="tab" tabindex="0" aria-selected="true" id="tab-checklist" aria-controls="panel-checklist">Checklist</a>
-            </li>
-            <li class="slds-tabs_default__item" title="Veteran Info" role="presentation">
-              <a class="slds-tabs_default__link" href="#" role="tab" tabindex="-1" aria-selected="false" id="tab-veteran-info" aria-controls="panel-veteran-info">Veteran Info</a>
-            </li>
-            <li class="slds-tabs_default__item" title="Grant Details" role="presentation">
-              <a class="slds-tabs_default__link" href="#" role="tab" tabindex="-1" aria-selected="false" id="tab-grant-details" aria-controls="panel-grant-details">Grant Details</a>
             </li>
             <li class="slds-tabs_default__item" title="Notes" role="presentation">
               <a class="slds-tabs_default__link" href="#" role="tab" tabindex="-1" aria-selected="false" id="tab-notes" aria-controls="panel-notes">Notes</a>
@@ -1603,10 +1656,7 @@
                 <section class="slds-accordion__section">
                   <div class="slds-accordion__summary">
                     <h2 class="slds-accordion__summary-heading">
-                      <button class="slds-button slds-button_reset slds-accordion__summary-action" aria-controls="accordion-content-claim-review" aria-expanded="false">
-                        <svg class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
-                          <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#switch"></use>
-                        </svg>
+                      <div class="slds-accordion__summary-action">
                         <span class="slds-accordion__summary-content">
                           <span class="checklist-summary-row">
                             <span class="checklist-status-marker" aria-hidden="true"></span>
@@ -1621,7 +1671,7 @@
                             </span>
                           </span>
                         </span>
-                      </button>
+                      </div>
                     </h2>
                     <div class="checklist-row-action">
                       <button class="slds-button slds-button_icon slds-button_icon-border checklist-open-tab" title="View Claim Review" data-item-name="Claim Review">
@@ -1632,60 +1682,6 @@
                       </button>
                     </div>
                   </div>
-                  <div class="slds-accordion__content" id="accordion-content-claim-review">
-                    <div class="checklist-detail-card">
-
-                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
-                      <h3 class="slds-text-heading_small">Documents</h3>
-                      <div class="slds-form-element">
-                        <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
-                          <svg class="slds-icon slds-icon_xx-small slds-icon-text-default slds-input__icon slds-input__icon_left" aria-hidden="true">
-                            <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#search"></use>
-                          </svg>
-                          <input type="search" class="slds-input" placeholder="Search All PDF Docs" />
-                        </div>
-                      </div>
-                    </div>
-
-                    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
-                      <thead>
-                        <tr class="slds-line-height_reset">
-                          <th scope="col"><div class="slds-truncate">Document Name</div></th>
-                          <th scope="col"><div class="slds-truncate">Date Uploaded</div></th>
-                          <th scope="col"><div class="slds-truncate">Status</div></th>
-                          <th scope="col"><div class="slds-truncate">Actions</div></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Submitted</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Accepted</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Pending</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Submitted</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                      </tbody>
-                    </table>
-
-                    </div>
-                  </div>
                 </section>
               </li>
 
@@ -1693,10 +1689,7 @@
                 <section class="slds-accordion__section">
                   <div class="slds-accordion__summary">
                     <h2 class="slds-accordion__summary-heading">
-                      <button class="slds-button slds-button_reset slds-accordion__summary-action" aria-controls="accordion-content-medical-feasibility" aria-expanded="false">
-                        <svg class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
-                          <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#switch"></use>
-                        </svg>
+                      <div class="slds-accordion__summary-action">
                         <span class="slds-accordion__summary-content">
                           <span class="checklist-summary-row">
                             <span class="checklist-status-marker" aria-hidden="true"></span>
@@ -1711,7 +1704,7 @@
                             </span>
                           </span>
                         </span>
-                      </button>
+                      </div>
                     </h2>
                     <div class="checklist-row-action">
                       <button class="slds-button slds-button_icon slds-button_icon-border checklist-open-tab" title="View Medical Feasibility" data-item-name="Medical Feasibility">
@@ -1722,60 +1715,6 @@
                       </button>
                     </div>
                   </div>
-                  <div class="slds-accordion__content" id="accordion-content-medical-feasibility">
-                    <div class="checklist-detail-card">
-
-                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
-                      <h3 class="slds-text-heading_small">Documents</h3>
-                      <div class="slds-form-element">
-                        <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
-                          <svg class="slds-icon slds-icon_xx-small slds-icon-text-default slds-input__icon slds-input__icon_left" aria-hidden="true">
-                            <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#search"></use>
-                          </svg>
-                          <input type="search" class="slds-input" placeholder="Search All PDF Docs" />
-                        </div>
-                      </div>
-                    </div>
-
-                    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
-                      <thead>
-                        <tr class="slds-line-height_reset">
-                          <th scope="col"><div class="slds-truncate">Document Name</div></th>
-                          <th scope="col"><div class="slds-truncate">Date Uploaded</div></th>
-                          <th scope="col"><div class="slds-truncate">Status</div></th>
-                          <th scope="col"><div class="slds-truncate">Actions</div></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Submitted</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Accepted</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Pending</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Submitted</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                      </tbody>
-                    </table>
-
-                    </div>
-                  </div>
                 </section>
               </li>
 
@@ -1783,10 +1722,7 @@
                 <section class="slds-accordion__section checklist-item_complete">
                   <div class="slds-accordion__summary">
                     <h2 class="slds-accordion__summary-heading">
-                      <button class="slds-button slds-button_reset slds-accordion__summary-action" aria-controls="accordion-content-financial-feasibility" aria-expanded="false">
-                        <svg class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
-                          <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#switch"></use>
-                        </svg>
+                      <div class="slds-accordion__summary-action">
                         <span class="slds-accordion__summary-content">
                           <span class="checklist-summary-row">
                             <span class="checklist-status-marker checklist-status-marker_complete" aria-hidden="true">
@@ -1805,7 +1741,7 @@
                             </span>
                           </span>
                         </span>
-                      </button>
+                      </div>
                     </h2>
                     <div class="checklist-row-action">
                       <button class="slds-button slds-button_icon slds-button_icon-border checklist-open-tab" title="View Financial Feasibility" data-item-name="Financial Feasibility">
@@ -1816,60 +1752,6 @@
                       </button>
                     </div>
                   </div>
-                  <div class="slds-accordion__content" id="accordion-content-financial-feasibility">
-                    <div class="checklist-detail-card">
-
-                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
-                      <h3 class="slds-text-heading_small">Documents</h3>
-                      <div class="slds-form-element">
-                        <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
-                          <svg class="slds-icon slds-icon_xx-small slds-icon-text-default slds-input__icon slds-input__icon_left" aria-hidden="true">
-                            <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#search"></use>
-                          </svg>
-                          <input type="search" class="slds-input" placeholder="Search All PDF Docs" />
-                        </div>
-                      </div>
-                    </div>
-
-                    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
-                      <thead>
-                        <tr class="slds-line-height_reset">
-                          <th scope="col"><div class="slds-truncate">Document Name</div></th>
-                          <th scope="col"><div class="slds-truncate">Date Uploaded</div></th>
-                          <th scope="col"><div class="slds-truncate">Status</div></th>
-                          <th scope="col"><div class="slds-truncate">Actions</div></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Submitted</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Accepted</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Pending</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Submitted</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                      </tbody>
-                    </table>
-
-                    </div>
-                  </div>
                 </section>
               </li>
 
@@ -1877,10 +1759,7 @@
                 <section class="slds-accordion__section">
                   <div class="slds-accordion__summary">
                     <h2 class="slds-accordion__summary-heading">
-                      <button class="slds-button slds-button_reset slds-accordion__summary-action" aria-controls="accordion-content-property-sustainability" aria-expanded="false">
-                        <svg class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
-                          <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#switch"></use>
-                        </svg>
+                      <div class="slds-accordion__summary-action">
                         <span class="slds-accordion__summary-content">
                           <span class="checklist-summary-row">
                             <span class="checklist-status-marker" aria-hidden="true"></span>
@@ -1895,7 +1774,7 @@
                             </span>
                           </span>
                         </span>
-                      </button>
+                      </div>
                     </h2>
                     <div class="checklist-row-action">
                       <button class="slds-button slds-button_icon slds-button_icon-border checklist-open-tab" title="View Property Sustainability" data-item-name="Property Sustainability">
@@ -1906,60 +1785,6 @@
                       </button>
                     </div>
                   </div>
-                  <div class="slds-accordion__content" id="accordion-content-property-sustainability">
-                    <div class="checklist-detail-card">
-
-                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
-                      <h3 class="slds-text-heading_small">Documents</h3>
-                      <div class="slds-form-element">
-                        <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
-                          <svg class="slds-icon slds-icon_xx-small slds-icon-text-default slds-input__icon slds-input__icon_left" aria-hidden="true">
-                            <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#search"></use>
-                          </svg>
-                          <input type="search" class="slds-input" placeholder="Search All PDF Docs" />
-                        </div>
-                      </div>
-                    </div>
-
-                    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
-                      <thead>
-                        <tr class="slds-line-height_reset">
-                          <th scope="col"><div class="slds-truncate">Document Name</div></th>
-                          <th scope="col"><div class="slds-truncate">Date Uploaded</div></th>
-                          <th scope="col"><div class="slds-truncate">Status</div></th>
-                          <th scope="col"><div class="slds-truncate">Actions</div></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Submitted</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Accepted</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Pending</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Submitted</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                      </tbody>
-                    </table>
-
-                    </div>
-                  </div>
                 </section>
               </li>
 
@@ -1967,10 +1792,7 @@
                 <section class="slds-accordion__section">
                   <div class="slds-accordion__summary">
                     <h2 class="slds-accordion__summary-heading">
-                      <button class="slds-button slds-button_reset slds-accordion__summary-action" aria-controls="accordion-content-intent-to-reside" aria-expanded="false">
-                        <svg class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
-                          <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#switch"></use>
-                        </svg>
+                      <div class="slds-accordion__summary-action">
                         <span class="slds-accordion__summary-content">
                           <span class="checklist-summary-row">
                             <span class="checklist-status-marker" aria-hidden="true"></span>
@@ -1985,7 +1807,7 @@
                             </span>
                           </span>
                         </span>
-                      </button>
+                      </div>
                     </h2>
                     <div class="checklist-row-action">
                       <button class="slds-button slds-button_icon slds-button_icon-border checklist-open-tab" title="View Intent To Reside" data-item-name="Intent To Reside">
@@ -1994,60 +1816,6 @@
                         </svg>
                         <span class="slds-assistive-text">View Intent To Reside</span>
                       </button>
-                    </div>
-                  </div>
-                  <div class="slds-accordion__content" id="accordion-content-intent-to-reside">
-                    <div class="checklist-detail-card">
-
-                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
-                      <h3 class="slds-text-heading_small">Documents</h3>
-                      <div class="slds-form-element">
-                        <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
-                          <svg class="slds-icon slds-icon_xx-small slds-icon-text-default slds-input__icon slds-input__icon_left" aria-hidden="true">
-                            <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#search"></use>
-                          </svg>
-                          <input type="search" class="slds-input" placeholder="Search All PDF Docs" />
-                        </div>
-                      </div>
-                    </div>
-
-                    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
-                      <thead>
-                        <tr class="slds-line-height_reset">
-                          <th scope="col"><div class="slds-truncate">Document Name</div></th>
-                          <th scope="col"><div class="slds-truncate">Date Uploaded</div></th>
-                          <th scope="col"><div class="slds-truncate">Status</div></th>
-                          <th scope="col"><div class="slds-truncate">Actions</div></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Submitted</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Accepted</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Pending</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                        <tr>
-                          <td><div class="slds-truncate">PDF Document Name</div></td>
-                          <td><div class="slds-truncate">07/22/2026 4:30PM</div></td>
-                          <td><div class="slds-truncate">Submitted</div></td>
-                          <td><div class="slds-truncate"><a href="#">Download</a> · <a href="#">Preview</a></div></td>
-                        </tr>
-                      </tbody>
-                    </table>
-
                     </div>
                   </div>
                 </section>
@@ -2155,7 +1923,80 @@
             </div>
 
           </div>
-          <div class="slds-tabs_default__content slds-hide" role="tabpanel" id="panel-veteran-info" aria-labelledby="tab-veteran-info">
+          <div class="slds-tabs_default__content slds-hide" role="tabpanel" id="panel-notes" aria-labelledby="tab-notes">
+            <div class="checklist-empty-state">
+              <svg class="slds-icon" aria-hidden="true">
+                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
+              </svg>
+              <h3 class="slds-text-heading_medium">No Notes yet</h3>
+              <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
+            </div>
+          </div>
+          <div class="slds-tabs_default__content slds-hide" role="tabpanel" id="panel-business-events" aria-labelledby="tab-business-events">
+            <div class="checklist-empty-state">
+              <svg class="slds-icon" aria-hidden="true">
+                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
+              </svg>
+              <h3 class="slds-text-heading_medium">No Business Events yet</h3>
+              <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
+            </div>
+          </div>
+          <div class="slds-tabs_default__content slds-hide" role="tabpanel" id="panel-correspondence" aria-labelledby="tab-correspondence">
+            <div class="checklist-empty-state">
+              <svg class="slds-icon" aria-hidden="true">
+                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
+              </svg>
+              <h3 class="slds-text-heading_medium">No Correspondence yet</h3>
+              <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
+            </div>
+          </div>
+          <div class="slds-tabs_default__content slds-hide" role="tabpanel" id="panel-files" aria-labelledby="tab-files">
+            <div class="checklist-empty-state">
+              <svg class="slds-icon" aria-hidden="true">
+                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
+              </svg>
+              <h3 class="slds-text-heading_medium">No Files yet</h3>
+              <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
+            </div>
+          </div>
+          <div class="slds-tabs_default__content slds-hide" role="tabpanel" id="panel-workbucket-team" aria-labelledby="tab-workbucket-team">
+            <div class="checklist-empty-state">
+              <svg class="slds-icon" aria-hidden="true">
+                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
+              </svg>
+              <h3 class="slds-text-heading_medium">No Workbucket Team yet</h3>
+              <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
+            </div>
+          </div>
+          <div class="slds-tabs_default__content slds-hide" role="tabpanel" id="panel-history" aria-labelledby="tab-history">
+            <div class="checklist-empty-state">
+              <svg class="slds-icon" aria-hidden="true">
+                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
+              </svg>
+              <h3 class="slds-text-heading_medium">No History yet</h3>
+              <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+      </div>
+
+      <div class="slds-col slds-size_1-of-3">
+        <div class="slds-card">
+          <div class="slds-card__body slds-card__body_inner">
+
+            <div class="slds-tabs_default">
+              <ul class="slds-tabs_default__nav" role="tablist">
+                <li class="slds-tabs_default__item slds-is-active" title="Veteran Info" role="presentation">
+                  <a class="slds-tabs_default__link" href="#" role="tab" tabindex="0" aria-selected="true" id="tab-veteran-info" aria-controls="panel-veteran-info">Veteran Info</a>
+                </li>
+                <li class="slds-tabs_default__item" title="Grant Details" role="presentation">
+                  <a class="slds-tabs_default__link" href="#" role="tab" tabindex="-1" aria-selected="false" id="tab-grant-details" aria-controls="panel-grant-details">Grant Details</a>
+                </li>
+              </ul>
+          <div class="slds-tabs_default__content slds-show" role="tabpanel" id="panel-veteran-info" aria-labelledby="tab-veteran-info">
 
             <div class="slds-grid slds-grid_align-spread slds-wrap veteran-subnav">
               <div class="veteran-subnav__pills">
@@ -2166,14 +2007,6 @@
                 <button class="slds-button slds-button_neutral veteran-subnav__pill" data-panel-id="veteran-panel-loans">Loans</button>
                 <button class="slds-button slds-button_neutral veteran-subnav__pill" data-panel-id="veteran-panel-history">History</button>
                 <button class="slds-button slds-button_neutral veteran-subnav__pill" data-panel-id="veteran-panel-event-log">Event Log</button>
-              </div>
-              <div class="slds-form-element veteran-subnav__search">
-                <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
-                  <svg class="slds-icon slds-icon_xx-small slds-icon-text-default slds-input__icon slds-input__icon_left" aria-hidden="true">
-                    <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#search"></use>
-                  </svg>
-                  <input type="search" class="slds-input veteran-info-search-input" placeholder="Search John Stamos..." />
-                </div>
               </div>
             </div>
 
@@ -2332,61 +2165,57 @@
                 <button class="slds-button slds-button_neutral veteran-subnav__pill" data-panel-id="grant-detail-panel-veteran-info">Veteran Information</button>
                 <button class="slds-button slds-button_neutral veteran-subnav__pill" data-panel-id="grant-detail-panel-grant-info">Grant Information</button>
               </div>
-              <div class="slds-form-element veteran-subnav__search">
-                <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
-                  <svg class="slds-icon slds-icon_xx-small slds-icon-text-default slds-input__icon slds-input__icon_left" aria-hidden="true">
-                    <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#search"></use>
-                  </svg>
-                  <input type="search" class="slds-input" placeholder="Search Grant Details..." />
-                </div>
-              </div>
             </div>
 
             <div class="veteran-subnav-panel" id="grant-detail-panel-case-info">
-              <ul class="slds-page-header__detail-row">
-                <li class="slds-page-header__detail-block">
-                  <dl>
-                    <dt class="slds-text-title slds-truncate" title="Workbucket Number">Workbucket Number</dt>
-                    <dd class="slds-truncate grant-details-workbucket-number">#12345467</dd>
-                  </dl>
-                </li>
-                <li class="slds-page-header__detail-block">
-                  <dl>
-                    <dt class="slds-text-title slds-truncate" title="Status">Status</dt>
-                    <dd class="slds-truncate">Intake</dd>
-                  </dl>
-                </li>
-                <li class="slds-page-header__detail-block">
-                  <dl>
-                    <dt class="slds-text-title slds-truncate" title="Workbucket Owner">Workbucket Owner</dt>
-                    <dd class="slds-truncate"><a href="#">Samantha Rogers</a></dd>
-                  </dl>
-                </li>
-                <li class="slds-page-header__detail-block">
-                  <dl>
-                    <dt class="slds-text-title slds-truncate" title="Next Task Due Date">Next Task Due Date</dt>
-                    <dd class="slds-truncate">3/26/2026</dd>
-                  </dl>
-                </li>
-                <li class="slds-page-header__detail-block">
-                  <dl>
-                    <dt class="slds-text-title slds-truncate" title="Grant Number">Grant Number</dt>
-                    <dd class="slds-truncate">SAH00799341</dd>
-                  </dl>
-                </li>
-                <li class="slds-page-header__detail-block">
-                  <dl>
-                    <dt class="slds-text-title slds-truncate" title="Grant Status">Grant Status</dt>
-                    <dd class="slds-truncate">Active</dd>
-                  </dl>
-                </li>
-                <li class="slds-page-header__detail-block">
-                  <dl>
-                    <dt class="slds-text-title slds-truncate" title="Region">Region</dt>
-                    <dd class="slds-truncate">Northwest</dd>
-                  </dl>
-                </li>
-              </ul>
+              <div class="grant-details-columns">
+                <ul class="slds-page-header__detail-row">
+                  <li class="slds-page-header__detail-block">
+                    <dl>
+                      <dt class="slds-text-title slds-truncate" title="Workbucket Number">Workbucket Number</dt>
+                      <dd class="slds-truncate grant-details-workbucket-number">#12345467</dd>
+                    </dl>
+                  </li>
+                  <li class="slds-page-header__detail-block">
+                    <dl>
+                      <dt class="slds-text-title slds-truncate" title="Status">Status</dt>
+                      <dd class="slds-truncate">Intake</dd>
+                    </dl>
+                  </li>
+                  <li class="slds-page-header__detail-block">
+                    <dl>
+                      <dt class="slds-text-title slds-truncate" title="Workbucket Owner">Workbucket Owner</dt>
+                      <dd class="slds-truncate"><a href="#">Samantha Rogers</a></dd>
+                    </dl>
+                  </li>
+                  <li class="slds-page-header__detail-block">
+                    <dl>
+                      <dt class="slds-text-title slds-truncate" title="Next Task Due Date">Next Task Due Date</dt>
+                      <dd class="slds-truncate">3/26/2026</dd>
+                    </dl>
+                  </li>
+                </ul>
+                <ul class="slds-page-header__detail-row">
+                  <li class="slds-page-header__detail-block">
+                    <dl>
+                      <dt class="slds-text-title slds-truncate" title="Grant Number">Grant Number</dt>
+                      <dd class="slds-truncate">SAH00799341</dd>
+                    </dl>
+                  </li>
+                  <li class="slds-page-header__detail-block">
+                    <dl>
+                      <dt class="slds-text-title slds-truncate" title="Grant Status">Grant Status</dt>
+                      <dd class="slds-truncate">Active</dd>
+                    </dl>
+                  </li>
+                  <li class="slds-page-header__detail-block">
+                    <dl>
+                      <dt class="slds-text-title slds-truncate" title="Region">Region</dt>
+                      <dd class="slds-truncate">Northwest</dd>
+                    </dl>
+                  </li>
+                </ul>
+              </div>
             </div>
 
             <div class="veteran-subnav-panel" id="grant-detail-panel-checklist-dates" hidden>
@@ -2418,62 +2247,10 @@
             </div>
 
           </div>
-          <div class="slds-tabs_default__content slds-hide" role="tabpanel" id="panel-notes" aria-labelledby="tab-notes">
-            <div class="checklist-empty-state">
-              <svg class="slds-icon" aria-hidden="true">
-                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
-              </svg>
-              <h3 class="slds-text-heading_medium">No Notes yet</h3>
-              <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
             </div>
-          </div>
-          <div class="slds-tabs_default__content slds-hide" role="tabpanel" id="panel-business-events" aria-labelledby="tab-business-events">
-            <div class="checklist-empty-state">
-              <svg class="slds-icon" aria-hidden="true">
-                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
-              </svg>
-              <h3 class="slds-text-heading_medium">No Business Events yet</h3>
-              <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
-            </div>
-          </div>
-          <div class="slds-tabs_default__content slds-hide" role="tabpanel" id="panel-correspondence" aria-labelledby="tab-correspondence">
-            <div class="checklist-empty-state">
-              <svg class="slds-icon" aria-hidden="true">
-                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
-              </svg>
-              <h3 class="slds-text-heading_medium">No Correspondence yet</h3>
-              <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
-            </div>
-          </div>
-          <div class="slds-tabs_default__content slds-hide" role="tabpanel" id="panel-files" aria-labelledby="tab-files">
-            <div class="checklist-empty-state">
-              <svg class="slds-icon" aria-hidden="true">
-                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
-              </svg>
-              <h3 class="slds-text-heading_medium">No Files yet</h3>
-              <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
-            </div>
-          </div>
-          <div class="slds-tabs_default__content slds-hide" role="tabpanel" id="panel-workbucket-team" aria-labelledby="tab-workbucket-team">
-            <div class="checklist-empty-state">
-              <svg class="slds-icon" aria-hidden="true">
-                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
-              </svg>
-              <h3 class="slds-text-heading_medium">No Workbucket Team yet</h3>
-              <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
-            </div>
-          </div>
-          <div class="slds-tabs_default__content slds-hide" role="tabpanel" id="panel-history" aria-labelledby="tab-history">
-            <div class="checklist-empty-state">
-              <svg class="slds-icon" aria-hidden="true">
-                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
-              </svg>
-              <h3 class="slds-text-heading_medium">No History yet</h3>
-              <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
-            </div>
+
           </div>
         </div>
-
       </div>
     </div>
 
@@ -3234,15 +3011,6 @@
       });
     });
 
-    document.querySelectorAll('.slds-accordion__summary-action').forEach(function (button) {
-      button.addEventListener('click', function () {
-        var section = button.closest('.slds-accordion__section');
-        var isOpen = section.classList.contains('slds-is-open');
-        section.classList.toggle('slds-is-open', !isOpen);
-        button.setAttribute('aria-expanded', String(!isOpen));
-      });
-    });
-
     document.querySelectorAll('.slds-tabs_default__nav').forEach(function (nav) {
       var tabs = nav.querySelectorAll('.slds-tabs_default__link');
       tabs.forEach(function (tab) {
@@ -3397,8 +3165,6 @@
         }
 
         // Veteran Info tab
-        var searchInput = view.querySelector('.veteran-info-search-input');
-        if (searchInput) searchInput.placeholder = 'Search ' + record.veteranName + '...';
         var veteranNameValue = view.querySelector('.veteran-info-name-value');
         if (veteranNameValue) veteranNameValue.textContent = record.veteranName;
 
@@ -3422,6 +3188,110 @@
         }
       }
 
+      function showAppView(viewId) {
+        document.querySelectorAll('.app-view').forEach(function (view) {
+          view.hidden = view.id !== viewId;
+        });
+      }
+
+      var subTabsBar = document.querySelector('.slds-sub-tabs');
+      var subTabsNav = subTabsBar ? subTabsBar.querySelector('.slds-tabs_default__nav') : null;
+
+      function syncSubTabsBarHeightVar() {
+        if (!subTabsBar) return;
+        var height = subTabsBar.hidden ? 0 : subTabsBar.getBoundingClientRect().height;
+        document.documentElement.style.setProperty('--subtabs-bar-height', height + 'px');
+      }
+
+      // parentLi.subTabs is the ordered list of {name, viewId} checklist
+      // items currently open under that workbucket tab; parentLi.activeSubTab
+      // is whichever one is showing (or null for the main workbucket view).
+      // Re-derived into DOM classes on every call rather than kept in sync
+      // independently, so the pill markup can never drift from this array.
+      function renderSubTabsBar(parentLi) {
+        if (!subTabsBar || !subTabsNav) return;
+
+        if (!parentLi || !parentLi.subTabs || parentLi.subTabs.length === 0) {
+          subTabsBar.hidden = true;
+          subTabsNav.innerHTML = '';
+          if (parentLi) parentLi.classList.remove('slds-has-sub-tabs');
+          syncSubTabsBarHeightVar();
+          return;
+        }
+
+        parentLi.classList.add('slds-has-sub-tabs');
+        subTabsNav.innerHTML = parentLi.subTabs.map(function (tab) {
+          var isActive = parentLi.activeSubTab && parentLi.activeSubTab.name === tab.name;
+          return (
+            '<li class="slds-tabs_default__item slds-sub-tabs__item' + (isActive ? ' slds-active' : '') + '" data-subtab-name="' + tab.name + '">' +
+              '<a href="#" class="slds-tabs_default__link" role="tab" aria-selected="' + isActive + '">' +
+                '<span class="slds-icon_container slds-m-right_x-small">' +
+                  '<svg class="slds-icon slds-icon_x-small" aria-hidden="true">' +
+                    '<use xlink:href="assets/icons/standard-sprite/svg/symbols.svg#task"></use>' +
+                  '</svg>' +
+                '</span>' +
+                '<span class="slds-truncate">' + tab.name + '</span>' +
+              '</a>' +
+              '<button class="slds-button slds-button_icon slds-button_icon-x-small subtab-close-btn" title="Close ' + tab.name + '">' +
+                '<svg class="slds-button__icon" aria-hidden="true">' +
+                  '<use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#close"></use>' +
+                '</svg>' +
+                '<span class="slds-assistive-text">Close ' + tab.name + '</span>' +
+              '</button>' +
+            '</li>'
+          );
+        }).join('');
+        subTabsBar.hidden = false;
+        syncSubTabsBarHeightVar();
+      }
+
+      function showSubTab(parentLi, tab) {
+        parentLi.activeSubTab = tab;
+        showAppView(tab.viewId);
+        if (tab.name === 'Claim Review') renderTaskClaimReviewHeader(currentWorkbucketRecord);
+        renderSubTabsBar(parentLi);
+      }
+
+      if (subTabsNav) {
+        subTabsNav.addEventListener('click', function (event) {
+          var parentLi = navTabList.querySelector(':scope > .slds-context-bar__item_tab.slds-is-active');
+          if (!parentLi || !parentLi.subTabs) return;
+
+          var closeBtn = event.target.closest('.subtab-close-btn');
+          if (closeBtn) {
+            event.stopPropagation();
+            var closeLi = closeBtn.closest('.slds-sub-tabs__item');
+            var closeName = closeLi.getAttribute('data-subtab-name');
+            var closeIndex = parentLi.subTabs.findIndex(function (t) { return t.name === closeName; });
+            if (closeIndex === -1) return;
+            var wasActive = parentLi.activeSubTab && parentLi.activeSubTab.name === closeName;
+            parentLi.subTabs.splice(closeIndex, 1);
+            if (wasActive) {
+              var fallback = parentLi.subTabs[closeIndex] || parentLi.subTabs[closeIndex - 1] || null;
+              if (fallback) {
+                showSubTab(parentLi, fallback);
+              } else {
+                parentLi.activeSubTab = null;
+                showAppView('view-workbucket');
+                renderSubTabsBar(parentLi);
+              }
+            } else {
+              renderSubTabsBar(parentLi);
+            }
+            return;
+          }
+
+          var link = event.target.closest('.slds-tabs_default__link');
+          if (link) {
+            event.preventDefault();
+            var pillLi = link.closest('.slds-sub-tabs__item');
+            var pillName = pillLi.getAttribute('data-subtab-name');
+            var tab = parentLi.subTabs.filter(function (t) { return t.name === pillName; })[0];
+            if (tab) showSubTab(parentLi, tab);
+          }
+        });
+      }
+
       function activateNavTab(li) {
         navTabList.querySelectorAll(':scope > .slds-context-bar__item_tab').forEach(function (item) {
           var isActive = item === li;
@@ -3431,11 +3301,6 @@
         });
 
         var viewId = li.getAttribute('data-view-id');
-        if (viewId) {
-          document.querySelectorAll('.app-view').forEach(function (view) {
-            view.hidden = view.id !== viewId;
-          });
-        }
 
         if (viewId === 'view-workbucket' && li.dataset.workbucketNumber) {
           renderWorkbucketHeader({
@@ -3445,7 +3310,18 @@
             status: li.dataset.status,
             region: li.dataset.region
           });
+          // Activating the parent tab always returns to its own overview
+          // (not whichever sub-tab was last open) so there's a reliable way
+          // back to the checklist to open another item — the sub-tabs bar
+          // stays visible below it with none of its pills marked active.
+          li.activeSubTab = null;
+          renderSubTabsBar(li);
+          showAppView('view-workbucket');
+          return;
         }
+
+        renderSubTabsBar(null);
+        if (viewId) showAppView(viewId);
       }
 
       function wireNavTab(li) {
@@ -3485,49 +3361,17 @@
       document.querySelectorAll('.checklist-open-tab').forEach(function (button) {
         button.addEventListener('click', function () {
           var name = button.getAttribute('data-item-name');
-          if (name === 'Claim Review') renderTaskClaimReviewHeader(currentWorkbucketRecord);
-
-          var existing = navTabList.querySelector('[data-checklist-tab="' + name + '"]');
-          if (existing) {
-            activateNavTab(existing);
-            return;
-          }
-
-          var activeTab = navTabList.querySelector(':scope > .slds-context-bar__item_tab.slds-is-active');
+          var parentLi = navTabList.querySelector(':scope > .slds-context-bar__item_tab.slds-is-active');
+          if (!parentLi || !parentLi.subTabs) return;
 
           var slug = name.toLowerCase().replace(/\s+/g, '-');
-
-          var li = document.createElement('li');
-          li.className = 'slds-context-bar__item slds-context-bar__item_tab';
-          li.setAttribute('data-checklist-tab', name);
-          li.setAttribute('data-view-id', 'view-task-' + slug);
-          li.innerHTML =
-            '<a href="#" class="slds-context-bar__label-action" aria-current="false">' +
-              '<span class="slds-icon_container">' +
-                '<svg class="slds-icon slds-icon_small" aria-hidden="true">' +
-                  '<use xlink:href="assets/icons/standard-sprite/svg/symbols.svg#task"></use>' +
-                '</svg>' +
-                '<span class="slds-assistive-text">Task</span>' +
-              '</span>' +
-              '<span class="slds-truncate">' + name + '</span>' +
-            '</a>' +
-            '<div class="slds-context-bar__icon-action slds-col_bump-left">' +
-              '<button class="slds-button slds-button_icon slds-button_icon-container slds-context-bar__button" title="Close ' + name + '">' +
-                '<svg class="slds-button__icon" aria-hidden="true">' +
-                  '<use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#close"></use>' +
-                '</svg>' +
-                '<span class="slds-assistive-text">Close ' + name + '</span>' +
-              '</button>' +
-            '</div>';
-
-          if (activeTab) {
-            activeTab.insertAdjacentElement('afterend', li);
-          } else {
-            navTabList.appendChild(li);
+          var tab = parentLi.subTabs.filter(function (t) { return t.name === name; })[0];
+          if (!tab) {
+            tab = { name: name, viewId: 'view-task-' + slug };
+            parentLi.subTabs.push(tab);
           }
 
-          wireNavTab(li);
-          activateNavTab(li);
+          showSubTab(parentLi, tab);
         });
       });
 
@@ -3548,6 +3392,8 @@
         li.dataset.workbucketNumber = record.workbucketNumber;
         li.dataset.status = record.status;
         li.dataset.region = record.region;
+        li.subTabs = [];
+        li.activeSubTab = null;
         li.innerHTML =
           '<a href="#" class="slds-context-bar__label-action" aria-current="false">' +
             '<span class="slds-icon_container">' +
