@@ -3494,10 +3494,14 @@
       function renderSubTabsBar(parentLi) {
         if (!subTabsBar || !subTabsNav) return;
 
-        if (!parentLi || !parentLi.subTabs || parentLi.subTabs.length === 0) {
+        // Shown for any active workbucket record tab, even with zero
+        // checklist items opened yet — the pinned Home/grant-number pill is
+        // always there as the row's first (and initially only) entry.
+        // Hidden only for non-record tabs (Home, Dashboard, Workbuckets
+        // list, etc.), which have no subTabs array at all.
+        if (!parentLi || !parentLi.subTabs) {
           subTabsBar.hidden = true;
           subTabsNav.innerHTML = '';
-          if (parentLi) parentLi.classList.remove('slds-has-sub-tabs');
           syncSubTabsBarHeightVar();
           return;
         }
@@ -3658,28 +3662,66 @@
 
       navTabList.querySelectorAll(':scope > .slds-context-bar__item_tab').forEach(wireNavTab);
 
-      // The pinned tab's own data-view-id/icon/label change to match
-      // whichever Home-dropdown item was last selected, so it's looked up
-      // by its stable .slds-is-pinned class rather than a fixed view id.
+      // The pinned tab always stays "Home" — looked up by its stable
+      // .slds-is-pinned class. Every other Home-dropdown item opens as its
+      // own closable tab next to it instead of relabeling this one.
       var homeNavTab = navTabList.querySelector('.slds-context-bar__item_tab.slds-is-pinned');
 
-      function selectHomeNavItem(viewId, label, iconName) {
-        if (!homeNavTab) return;
-        homeNavTab.setAttribute('data-view-id', viewId);
-        var iconUse = homeNavTab.querySelector('.slds-context-bar__label-action .slds-icon_container use');
-        if (iconUse) iconUse.setAttribute('xlink:href', 'assets/icons/utility-sprite/svg/symbols.svg#' + iconName);
-        var assistiveText = homeNavTab.querySelector('.slds-context-bar__label-action .slds-icon_container .slds-assistive-text');
-        if (assistiveText) assistiveText.textContent = label;
-        var truncateLabel = homeNavTab.querySelector('.slds-context-bar__label-action .slds-truncate');
-        if (truncateLabel) truncateLabel.textContent = label;
-        activateNavTab(homeNavTab);
+      function openHomeNavTab(viewId, label, iconName) {
+        if (viewId === 'view-home') {
+          if (homeNavTab) activateNavTab(homeNavTab);
+          return;
+        }
+
+        // Scoped to actual tab <li> elements — a plain attribute selector
+        // here would also match the dropdown menu item <a> itself (it
+        // carries the same data-view-id for this click handler's own use),
+        // since that menu lives inside the same navTabList container.
+        var existing = navTabList.querySelector(':scope > li.slds-context-bar__item_tab[data-view-id="' + viewId + '"]');
+        if (existing) {
+          activateNavTab(existing);
+          return;
+        }
+
+        var activeTab = navTabList.querySelector(':scope > .slds-context-bar__item_tab.slds-is-active');
+
+        var li = document.createElement('li');
+        li.className = 'slds-context-bar__item slds-context-bar__item_tab';
+        li.setAttribute('data-view-id', viewId);
+        li.innerHTML =
+          '<a href="#" class="slds-context-bar__label-action" aria-current="false">' +
+            '<span class="slds-icon_container">' +
+              '<svg class="slds-icon slds-icon_small" aria-hidden="true">' +
+                '<use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#' + iconName + '"></use>' +
+              '</svg>' +
+              '<span class="slds-assistive-text">' + label + '</span>' +
+            '</span>' +
+            '<span class="slds-truncate">' + label + '</span>' +
+          '</a>' +
+          '<div class="slds-context-bar__icon-action slds-col_bump-left">' +
+            '<button class="slds-button slds-button_icon slds-button_icon-container slds-context-bar__button" title="Close ' + label + '">' +
+              '<svg class="slds-button__icon" aria-hidden="true">' +
+                '<use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#close"></use>' +
+              '</svg>' +
+              '<span class="slds-assistive-text">Close ' + label + '</span>' +
+            '</button>' +
+          '</div>';
+
+        if (activeTab) {
+          activeTab.insertAdjacentElement('afterend', li);
+        } else {
+          navTabList.appendChild(li);
+        }
+
+        wireNavTab(li);
+        activateNavTab(li);
       }
 
       document.querySelectorAll('.home-nav-menu-item').forEach(function (item) {
         item.addEventListener('click', function (event) {
           event.preventDefault();
           var label = item.querySelector('.slds-truncate').textContent;
-          selectHomeNavItem(item.getAttribute('data-view-id'), label, item.getAttribute('data-icon'));
+          openHomeNavTab(item.getAttribute('data-view-id'), label, item.getAttribute('data-icon'));
           var trigger = item.closest('.slds-dropdown-trigger');
           if (trigger) trigger.classList.remove('slds-is-open');
         });
@@ -3689,8 +3731,8 @@
       if (appNameLink) {
         appNameLink.addEventListener('click', function (event) {
           event.preventDefault();
-          selectHomeNavItem('view-home', 'Home', 'home');
           if (homeNavTab) {
+            activateNavTab(homeNavTab);
             var homeLink = homeNavTab.querySelector('.slds-context-bar__label-action');
             if (homeLink) homeLink.focus();
           }
