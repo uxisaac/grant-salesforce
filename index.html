@@ -44,6 +44,14 @@
       z-index: 99;
     }
 
+    /* Icon and label sit flush together by default — every top-level tab
+       (Home, the Home-dropdown pages, workbucket record tabs) uses the
+       same icon + truncate-label structure, so this one rule covers all
+       of them instead of adding spacing per tab template. */
+    .slds-context-bar__label-action {
+      gap: var(--slds-g-spacing-2);
+    }
+
     .slds-global-header {
       box-shadow: none;
     }
@@ -3691,7 +3699,7 @@
         li.innerHTML =
           '<a href="#" class="slds-context-bar__label-action" aria-current="false">' +
             '<span class="slds-icon_container">' +
-              '<svg class="slds-icon slds-icon_small" aria-hidden="true">' +
+              '<svg class="slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">' +
                 '<use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#' + iconName + '"></use>' +
               '</svg>' +
               '<span class="slds-assistive-text">' + label + '</span>' +
