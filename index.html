@@ -17,10 +17,31 @@
     }
 
     /* .slds-global-header_container is position:fixed, so it's removed from
-       normal flow — offset the body by its height or the nav/main below it
-       renders hidden underneath the header. */
+       normal flow — offset the body by its height (plus the nav tab strip
+       and sub-tabs row below, both now also fixed — see .slds-context-bar
+       and .slds-sub-tabs) or content underneath renders hidden beneath them. */
     body {
-      padding-top: var(--slds-s-header-sizing-height, 3.125rem);
+      padding-top: calc(var(--slds-s-header-sizing-height, 3.125rem) + var(--slds-s-navigation-sizing-height, 2.5rem) + var(--subtabs-bar-height, 0px));
+    }
+
+    /* Pinned below the fixed global header so the tab strip (and whichever
+       nested sub-tabs row is open beneath it) stay on screen while the page
+       content scrolls, instead of scrolling away with everything else —
+       nothing below .app-body-layout has its own scroll container, so the
+       whole page scrolls as one unit today. */
+    .slds-context-bar {
+      position: fixed;
+      top: var(--slds-s-header-sizing-height, 3.125rem);
+      inset-inline-start: 0;
+      width: 100%;
+      z-index: 99;
+    }
+    .slds-sub-tabs {
+      position: fixed;
+      top: calc(var(--slds-s-header-sizing-height, 3.125rem) + var(--slds-s-navigation-sizing-height, 2.5rem));
+      inset-inline-start: 0;
+      width: 100%;
+      z-index: 99;
     }
 
     .slds-global-header {
@@ -96,6 +117,13 @@
        token for an arbitrary content-area size, so this is a plain value. */
     .slds-card__body_inner {
       min-height: 20rem;
+    }
+
+    /* Home view's top card is a short header-style bar, not a tall content
+       area like the two cards below it. */
+    .home-top-card .slds-card__body_inner {
+      min-height: 0;
+      padding-block: var(--slds-g-spacing-6);
     }
 
     /* Tab items default to slds-g-spacing-3 (0.75rem) inline padding — bump
@@ -367,39 +395,29 @@
       fill: var(--slds-g-color-neutral-base-100, #fff);
     }
 
-    .checklist-badge_done {
-      background: var(--slds-g-color-on-success-2);
-      color: var(--slds-g-color-neutral-base-100);
-      border-color: transparent;
-    }
-    .checklist-badge_warning {
-      background: var(--slds-g-color-warning-container-1);
-      color: var(--slds-g-color-on-warning-1);
-      border-color: transparent;
-    }
-
-    /* Home list Status column badges. */
-    .home-badge_active {
+    /* Home list Status column badges — reused as-is (same classes) for the
+       checklist rows and each task page's own Status field, so both places
+       stay in sync with this single set of styles. */
+    .home-badge_on-track {
       background: var(--slds-g-color-success-container-1);
       color: var(--slds-g-color-on-success-1);
       border-color: transparent;
     }
-    .home-badge_pending {
-      background: var(--slds-g-color-warning-container-1);
-      color: var(--slds-g-color-on-warning-1);
-      border-color: transparent;
+    /* Checklist-only: a completed item gets "Done" instead of "On Track" —
+       same green text, but a white background (bordered so it's still
+       legible against the white card behind it) instead of the filled
+       green On Track uses. */
+    .home-badge_done {
+      background: var(--slds-g-color-neutral-base-100);
+      color: var(--slds-g-color-on-success-1);
+      border-color: var(--slds-g-color-border-success-1);
     }
-    .home-badge_under-review {
-      background: var(--slds-g-color-info-container-1);
-      color: var(--slds-g-color-on-info-1);
-      border-color: transparent;
-    }
-    .home-badge_deadline-approaching {
+    .home-badge_due-soon {
       background: var(--slds-g-color-palette-orange-90);
       color: var(--slds-g-color-palette-orange-50);
       border-color: transparent;
     }
-    .home-badge_deadline-missed {
+    .home-badge_overdue {
       background: var(--slds-g-color-error-container-1);
       color: var(--slds-g-color-on-error-1);
       border-color: transparent;
@@ -541,6 +559,28 @@
     .home-list-search .slds-input {
       border-radius: var(--slds-g-radius-border-pill);
       min-width: 20rem;
+    }
+    .home-list-filter-panel {
+      width: 20rem;
+    }
+    .home-list-filter-options {
+      display: flex;
+      flex-direction: column;
+      gap: var(--slds-g-spacing-3);
+    }
+    .home-list-filter-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--slds-g-spacing-3);
+    }
+    .home-list-grant-cell {
+      display: flex;
+      flex-direction: column;
+      gap: var(--slds-g-spacing-1);
+    }
+    .home-list-grant-cell__number {
+      color: var(--slds-g-color-on-surface-3);
+      font-size: var(--slds-g-font-scale-neg-1);
     }
     /* Reference design shows every column header with a visible chevron —
        SLDS's own .slds-is-sortable__icon is display:none until the column
@@ -836,27 +876,27 @@
             <div class="slds-dropdown slds-dropdown_left">
               <ul class="slds-dropdown__list" role="menu" aria-label="Home">
                 <li class="slds-dropdown__item" role="presentation">
-                  <a href="#" role="menuitem" tabindex="-1">
+                  <a href="#" role="menuitem" tabindex="-1" class="home-nav-menu-item" data-view-id="view-home" data-icon="home">
                     <span class="slds-truncate">Home</span>
                   </a>
                 </li>
                 <li class="slds-dropdown__item" role="presentation">
-                  <a href="#" role="menuitem" tabindex="-1">
+                  <a href="#" role="menuitem" tabindex="-1" class="home-nav-menu-item" data-view-id="view-dashboard" data-icon="metrics">
                     <span class="slds-truncate">Dashboard</span>
                   </a>
                 </li>
                 <li class="slds-dropdown__item" role="presentation">
-                  <a href="#" role="menuitem" tabindex="-1">
+                  <a href="#" role="menuitem" tabindex="-1" class="home-nav-menu-item" data-view-id="view-workbuckets" data-icon="offline_briefcase">
                     <span class="slds-truncate">Workbuckets</span>
                   </a>
                 </li>
                 <li class="slds-dropdown__item" role="presentation">
-                  <a href="#" role="menuitem" tabindex="-1">
+                  <a href="#" role="menuitem" tabindex="-1" class="home-nav-menu-item" data-view-id="view-team-members" data-icon="people">
                     <span class="slds-truncate">Team Members</span>
                   </a>
                 </li>
                 <li class="slds-dropdown__item" role="presentation">
-                  <a href="#" role="menuitem" tabindex="-1">
+                  <a href="#" role="menuitem" tabindex="-1" class="home-nav-menu-item" data-view-id="view-settings" data-icon="settings">
                     <span class="slds-truncate">Settings</span>
                   </a>
                 </li>
@@ -1018,7 +1058,7 @@
 
         <div class="slds-split-view__list-header slds-grid">
           <span class="default-split-view__sort-label">
-            Lead Score
+            Workbucket
             <svg class="slds-icon slds-icon_xx-small slds-icon-text-default" aria-hidden="true">
               <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#arrowdown"></use>
             </svg>
@@ -1033,7 +1073,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Closed</span>
-                <span class="slds-badge home-badge_active">Active</span>
+                <span class="slds-badge home-badge_on-track">On Track</span>
               </div>
             </a>
           </li>
@@ -1045,7 +1085,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Intake</span>
-                <span class="slds-badge home-badge_active">Active</span>
+                <span class="slds-badge home-badge_on-track">On Track</span>
               </div>
             </a>
           </li>
@@ -1057,7 +1097,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Intake</span>
-                <span class="slds-badge home-badge_deadline-approaching">Deadline Approaching</span>
+                <span class="slds-badge home-badge_due-soon">Due Soon</span>
               </div>
             </a>
           </li>
@@ -1069,7 +1109,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Closed</span>
-                <span class="slds-badge home-badge_active">Active</span>
+                <span class="slds-badge home-badge_on-track">On Track</span>
               </div>
             </a>
           </li>
@@ -1081,7 +1121,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Final Approval</span>
-                <span class="slds-badge home-badge_closed">Closed</span>
+                <span class="slds-badge home-badge_on-track">On Track</span>
               </div>
             </a>
           </li>
@@ -1093,7 +1133,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Conditional Approval</span>
-                <span class="slds-badge home-badge_active">Active</span>
+                <span class="slds-badge home-badge_on-track">On Track</span>
               </div>
             </a>
           </li>
@@ -1105,7 +1145,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Conditional Approval</span>
-                <span class="slds-badge home-badge_deadline-missed">Deadline Missed</span>
+                <span class="slds-badge home-badge_overdue">Overdue</span>
               </div>
             </a>
           </li>
@@ -1117,7 +1157,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Conditional Approval</span>
-                <span class="slds-badge home-badge_active">Active</span>
+                <span class="slds-badge home-badge_on-track">On Track</span>
               </div>
             </a>
           </li>
@@ -1129,7 +1169,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Closed</span>
-                <span class="slds-badge home-badge_pending">Pending</span>
+                <span class="slds-badge home-badge_due-soon">Due Soon</span>
               </div>
             </a>
           </li>
@@ -1141,7 +1181,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Intake</span>
-                <span class="slds-badge home-badge_active">Active</span>
+                <span class="slds-badge home-badge_on-track">On Track</span>
               </div>
             </a>
           </li>
@@ -1153,7 +1193,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Closed</span>
-                <span class="slds-badge home-badge_closed">Closed</span>
+                <span class="slds-badge home-badge_on-track">On Track</span>
               </div>
             </a>
           </li>
@@ -1165,7 +1205,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Closed</span>
-                <span class="slds-badge home-badge_active">Active</span>
+                <span class="slds-badge home-badge_on-track">On Track</span>
               </div>
             </a>
           </li>
@@ -1177,7 +1217,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Final Accounting</span>
-                <span class="slds-badge home-badge_under-review">Under Review</span>
+                <span class="slds-badge home-badge_due-soon">Due Soon</span>
               </div>
             </a>
           </li>
@@ -1189,7 +1229,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Intake</span>
-                <span class="slds-badge home-badge_active">Active</span>
+                <span class="slds-badge home-badge_on-track">On Track</span>
               </div>
             </a>
           </li>
@@ -1201,7 +1241,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Final Accounting</span>
-                <span class="slds-badge home-badge_pending">Pending</span>
+                <span class="slds-badge home-badge_due-soon">Due Soon</span>
               </div>
             </a>
           </li>
@@ -1213,7 +1253,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Project Management</span>
-                <span class="slds-badge home-badge_active">Active</span>
+                <span class="slds-badge home-badge_on-track">On Track</span>
               </div>
             </a>
           </li>
@@ -1225,7 +1265,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Intake</span>
-                <span class="slds-badge home-badge_closed">Closed</span>
+                <span class="slds-badge home-badge_on-track">On Track</span>
               </div>
             </a>
           </li>
@@ -1237,7 +1277,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Intake</span>
-                <span class="slds-badge home-badge_active">Active</span>
+                <span class="slds-badge home-badge_on-track">On Track</span>
               </div>
             </a>
           </li>
@@ -1249,7 +1289,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Intake</span>
-                <span class="slds-badge home-badge_under-review">Under Review</span>
+                <span class="slds-badge home-badge_due-soon">Due Soon</span>
               </div>
             </a>
           </li>
@@ -1261,7 +1301,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Conditional Approval</span>
-                <span class="slds-badge home-badge_active">Active</span>
+                <span class="slds-badge home-badge_on-track">On Track</span>
               </div>
             </a>
           </li>
@@ -1273,7 +1313,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Conditional Approval</span>
-                <span class="slds-badge home-badge_pending">Pending</span>
+                <span class="slds-badge home-badge_due-soon">Due Soon</span>
               </div>
             </a>
           </li>
@@ -1285,7 +1325,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Final Accounting</span>
-                <span class="slds-badge home-badge_active">Active</span>
+                <span class="slds-badge home-badge_on-track">On Track</span>
               </div>
             </a>
           </li>
@@ -1297,7 +1337,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Final Accounting</span>
-                <span class="slds-badge home-badge_closed">Closed</span>
+                <span class="slds-badge home-badge_on-track">On Track</span>
               </div>
             </a>
           </li>
@@ -1309,7 +1349,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Intake</span>
-                <span class="slds-badge home-badge_active">Active</span>
+                <span class="slds-badge home-badge_on-track">On Track</span>
               </div>
             </a>
           </li>
@@ -1321,7 +1361,7 @@
               </div>
               <div class="default-split-view__row default-split-view__row_secondary">
                 <span>Final Accounting</span>
-                <span class="slds-badge home-badge_under-review">Under Review</span>
+                <span class="slds-badge home-badge_due-soon">Due Soon</span>
               </div>
             </a>
           </li>
@@ -1332,16 +1372,201 @@
   <main id="main-content" class="slds-p-around_medium slds-grow">
 
   <div class="app-view" id="view-home">
+    <div class="slds-card home-top-card">
+      <div class="slds-card__body slds-card__body_inner">
+        <p class="slds-text-body_regular slds-text-align_center">Content for this tab hasn't been added.</p>
+      </div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-gutters slds-m-top_medium">
+      <div class="slds-col slds-size_2-of-3">
+        <div class="slds-card">
+          <div class="slds-card__body slds-card__body_inner">
+            <div class="checklist-empty-state">
+              <svg class="slds-icon" aria-hidden="true">
+                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
+              </svg>
+              <h3 class="slds-text-heading_medium">No content yet</h3>
+              <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slds-col slds-size_1-of-3">
+        <div class="slds-card">
+          <div class="slds-card__body slds-card__body_inner">
+            <div class="checklist-empty-state">
+              <svg class="slds-icon" aria-hidden="true">
+                <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
+              </svg>
+              <h3 class="slds-text-heading_medium">No content yet</h3>
+              <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-view" id="view-dashboard" hidden>
+    <div class="checklist-empty-state">
+      <svg class="slds-icon" aria-hidden="true">
+        <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
+      </svg>
+      <h3 class="slds-text-heading_medium">No Dashboard yet</h3>
+      <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
+    </div>
+  </div>
+
+  <div class="app-view" id="view-team-members" hidden>
+    <div class="checklist-empty-state">
+      <svg class="slds-icon" aria-hidden="true">
+        <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
+      </svg>
+      <h3 class="slds-text-heading_medium">No Team Members yet</h3>
+      <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
+    </div>
+  </div>
+
+  <div class="app-view" id="view-settings" hidden>
+    <div class="checklist-empty-state">
+      <svg class="slds-icon" aria-hidden="true">
+        <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
+      </svg>
+      <h3 class="slds-text-heading_medium">No Settings yet</h3>
+      <p class="slds-text-body_regular">Content for this tab hasn't been added.</p>
+    </div>
+  </div>
+
+  <div class="app-view" id="view-workbuckets" hidden>
 
     <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-wrap home-list-header">
       <h2 class="slds-text-heading_medium">150 Items on this list</h2>
       <div class="slds-grid slds-grid_vertical-align-center home-list-controls">
-        <button class="slds-button slds-button_neutral" hidden>
-          <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
-            <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#filter"></use>
-          </svg>
-          Filter
-        </button>
+        <div class="slds-dropdown-trigger slds-dropdown-trigger_click">
+          <button class="slds-button slds-button_neutral home-list-filter-button" aria-haspopup="true">
+            <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+              <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#filter"></use>
+            </svg>
+            Filter
+          </button>
+          <div class="slds-dropdown slds-dropdown_left home-list-filter-panel">
+            <div class="slds-p-around_medium">
+              <fieldset class="slds-form-element slds-m-bottom_medium">
+                <legend class="slds-text-heading_small slds-m-bottom_small">Stage</legend>
+                <div class="slds-form-element__control home-list-filter-options">
+                  <div class="slds-checkbox">
+                    <input type="checkbox" id="filter-stage-intake" class="home-list-filter-checkbox" />
+                    <label class="slds-checkbox__label" for="filter-stage-intake">
+                      <span class="slds-checkbox_faux"></span>
+                      <span class="slds-form-element__label">Intake</span>
+                    </label>
+                  </div>
+                  <div class="slds-checkbox">
+                    <input type="checkbox" id="filter-stage-conditional-approval" class="home-list-filter-checkbox" />
+                    <label class="slds-checkbox__label" for="filter-stage-conditional-approval">
+                      <span class="slds-checkbox_faux"></span>
+                      <span class="slds-form-element__label">Conditional Approval</span>
+                    </label>
+                  </div>
+                  <div class="slds-checkbox">
+                    <input type="checkbox" id="filter-stage-final-approval" class="home-list-filter-checkbox" />
+                    <label class="slds-checkbox__label" for="filter-stage-final-approval">
+                      <span class="slds-checkbox_faux"></span>
+                      <span class="slds-form-element__label">Final Approval</span>
+                    </label>
+                  </div>
+                  <div class="slds-checkbox">
+                    <input type="checkbox" id="filter-stage-project-management" class="home-list-filter-checkbox" />
+                    <label class="slds-checkbox__label" for="filter-stage-project-management">
+                      <span class="slds-checkbox_faux"></span>
+                      <span class="slds-form-element__label">Project Management</span>
+                    </label>
+                  </div>
+                  <div class="slds-checkbox">
+                    <input type="checkbox" id="filter-stage-final-accounting" class="home-list-filter-checkbox" />
+                    <label class="slds-checkbox__label" for="filter-stage-final-accounting">
+                      <span class="slds-checkbox_faux"></span>
+                      <span class="slds-form-element__label">Final Accounting</span>
+                    </label>
+                  </div>
+                  <div class="slds-checkbox">
+                    <input type="checkbox" id="filter-stage-closed" class="home-list-filter-checkbox" />
+                    <label class="slds-checkbox__label" for="filter-stage-closed">
+                      <span class="slds-checkbox_faux"></span>
+                      <span class="slds-form-element__label">Closed</span>
+                    </label>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="slds-form-element slds-m-bottom_medium">
+                <legend class="slds-text-heading_small slds-m-bottom_small">Status</legend>
+                <div class="slds-form-element__control home-list-filter-options">
+                  <div class="slds-checkbox">
+                    <input type="checkbox" id="filter-status-open" class="home-list-filter-checkbox" />
+                    <label class="slds-checkbox__label" for="filter-status-open">
+                      <span class="slds-checkbox_faux"></span>
+                      <span class="slds-form-element__label">Open</span>
+                    </label>
+                  </div>
+                  <div class="slds-checkbox">
+                    <input type="checkbox" id="filter-status-done" class="home-list-filter-checkbox" />
+                    <label class="slds-checkbox__label" for="filter-status-done">
+                      <span class="slds-checkbox_faux"></span>
+                      <span class="slds-form-element__label">Done</span>
+                    </label>
+                  </div>
+                  <div class="slds-checkbox">
+                    <input type="checkbox" id="filter-status-approaching-deadline" class="home-list-filter-checkbox" />
+                    <label class="slds-checkbox__label" for="filter-status-approaching-deadline">
+                      <span class="slds-checkbox_faux"></span>
+                      <span class="slds-form-element__label">Approaching Deadline</span>
+                    </label>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="slds-form-element">
+                <legend class="slds-text-heading_small slds-m-bottom_small">Region</legend>
+                <div class="slds-form-element__control home-list-filter-options">
+                  <div class="slds-checkbox">
+                    <input type="checkbox" id="filter-region-north-east" class="home-list-filter-checkbox" />
+                    <label class="slds-checkbox__label" for="filter-region-north-east">
+                      <span class="slds-checkbox_faux"></span>
+                      <span class="slds-form-element__label">North East</span>
+                    </label>
+                  </div>
+                  <div class="slds-checkbox">
+                    <input type="checkbox" id="filter-region-midwest" class="home-list-filter-checkbox" />
+                    <label class="slds-checkbox__label" for="filter-region-midwest">
+                      <span class="slds-checkbox_faux"></span>
+                      <span class="slds-form-element__label">Midwest</span>
+                    </label>
+                  </div>
+                  <div class="slds-checkbox">
+                    <input type="checkbox" id="filter-region-south-west" class="home-list-filter-checkbox" />
+                    <label class="slds-checkbox__label" for="filter-region-south-west">
+                      <span class="slds-checkbox_faux"></span>
+                      <span class="slds-form-element__label">South West</span>
+                    </label>
+                  </div>
+                  <div class="slds-checkbox">
+                    <input type="checkbox" id="filter-region-south-east" class="home-list-filter-checkbox" />
+                    <label class="slds-checkbox__label" for="filter-region-south-east">
+                      <span class="slds-checkbox_faux"></span>
+                      <span class="slds-form-element__label">South East</span>
+                    </label>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+            <footer class="slds-popover__footer home-list-filter-footer">
+              <button class="slds-button slds-button_neutral home-list-filter-clear">Clear</button>
+              <button class="slds-button slds-button_brand home-list-filter-apply">Apply</button>
+            </footer>
+          </div>
+        </div>
         <div class="slds-form-element home-list-search">
           <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
             <svg class="slds-icon slds-icon_xx-small slds-icon-text-default slds-input__icon slds-input__icon_left" aria-hidden="true">
@@ -1391,8 +1616,8 @@
               </label>
             </div>
           </th>
-          <th scope="col" aria-sort="none" data-sort-key="veteranName"><div class="home-list-th"><span class="slds-truncate">Veteran Name</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default home-list-sort-icon" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
-          <th scope="col" aria-sort="none" data-sort-key="grantNumber"><div class="home-list-th"><span class="slds-truncate">Grant Number</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default home-list-sort-icon" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
+          <th scope="col" aria-sort="none" data-sort-key="veteranName"><div class="home-list-th"><span class="slds-truncate">Grant</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default home-list-sort-icon" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
+          <th scope="col" aria-sort="none" data-sort-key="stage"><div class="home-list-th"><span class="slds-truncate">Stage</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default home-list-sort-icon" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
           <th scope="col" aria-sort="none" data-sort-key="workbucketNumber"><div class="home-list-th"><span class="slds-truncate">Workbuckets</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default home-list-sort-icon" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
           <th scope="col" aria-sort="none" data-sort-key="phone"><div class="home-list-th"><span class="slds-truncate">Phone Number</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default home-list-sort-icon" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
           <th scope="col" aria-sort="none" data-sort-key="email"><div class="home-list-th"><span class="slds-truncate">Email</span><svg class="slds-icon slds-icon_xx-small slds-icon-text-default home-list-sort-icon" aria-hidden="true"><use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#chevrondown"></use></svg></div></th>
@@ -1501,7 +1726,7 @@
             <li class="slds-page-header__detail-block">
               <dl>
                 <dt class="slds-text-title slds-truncate" title="Grant Status">Grant Status</dt>
-                <dd class="slds-truncate workbucket-header-status" title="Active">Active</dd>
+                <dd class="slds-truncate" title="Active"><span class="slds-badge home-badge_on-track workbucket-header-status">Active</span></dd>
               </dl>
             </li>
             <li class="slds-page-header__detail-block">
@@ -1661,7 +1886,7 @@
                           <span class="checklist-summary-row">
                             <span class="checklist-status-marker" aria-hidden="true"></span>
                             <span class="slds-truncate">Claim Review</span>
-                            <span class="slds-badge">Open</span>
+                            <span class="slds-badge home-badge_on-track">On Track</span>
                             <span class="checklist-due-date">Due on 2025/12/26</span>
                             <span class="checklist-progress-count">
                               <span class="slds-truncate">3 / 4</span>
@@ -1694,7 +1919,7 @@
                           <span class="checklist-summary-row">
                             <span class="checklist-status-marker" aria-hidden="true"></span>
                             <span class="slds-truncate">Medical Feasibility</span>
-                            <span class="slds-badge">Open</span>
+                            <span class="slds-badge home-badge_on-track">On Track</span>
                             <span class="checklist-due-date">Due on 2025/12/26</span>
                             <span class="checklist-progress-count">
                               <span class="slds-truncate">0 / 4</span>
@@ -1731,7 +1956,7 @@
                               </svg>
                             </span>
                             <span class="slds-truncate">Financial Feasibility</span>
-                            <span class="slds-badge checklist-badge_done">Done</span>
+                            <span class="slds-badge home-badge_done">Done</span>
                             <span class="checklist-due-date">Due on 2025/12/26</span>
                             <span class="checklist-progress-count">
                               <span class="slds-truncate">4 / 4</span>
@@ -1764,7 +1989,7 @@
                           <span class="checklist-summary-row">
                             <span class="checklist-status-marker" aria-hidden="true"></span>
                             <span class="slds-truncate">Property Sustainability</span>
-                            <span class="slds-badge checklist-badge_warning">Approaching Deadline</span>
+                            <span class="slds-badge home-badge_due-soon">Due Soon</span>
                             <span class="checklist-due-date">Due on 2025/12/26</span>
                             <span class="checklist-progress-count">
                               <span class="slds-truncate">3 / 4</span>
@@ -1797,7 +2022,7 @@
                           <span class="checklist-summary-row">
                             <span class="checklist-status-marker" aria-hidden="true"></span>
                             <span class="slds-truncate">Intent To Reside</span>
-                            <span class="slds-badge checklist-badge_warning">Approaching Deadline</span>
+                            <span class="slds-badge home-badge_due-soon">Due Soon</span>
                             <span class="checklist-due-date">Due on 2025/12/26</span>
                             <span class="checklist-progress-count">
                               <span class="slds-truncate">3 / 4</span>
@@ -1983,8 +2208,8 @@
     </div>
       </div>
 
-      <div class="slds-col slds-size_1-of-3">
-        <div class="slds-card">
+      <div class="slds-col slds-size_1-of-3 workbucket-sidebar-mount">
+        <div class="slds-card" id="workbucket-sidebar-card">
           <div class="slds-card__body slds-card__body_inner">
 
             <div class="slds-tabs_default">
@@ -2307,7 +2532,7 @@
             <li class="slds-page-header__detail-block">
               <dl>
                 <dt class="slds-text-title slds-truncate" title="Status">Status</dt>
-                <dd class="slds-truncate"><span class="slds-badge">Open</span></dd>
+                <dd class="slds-truncate"><span class="slds-badge home-badge_on-track">On Track</span></dd>
               </dl>
             </li>
             <li class="slds-page-header__detail-block">
@@ -2339,6 +2564,8 @@
       </div>
     </div>
 
+    <div class="slds-grid slds-wrap slds-gutters slds-m-top_medium">
+      <div class="slds-col slds-size_2-of-3">
     <div class="slds-card slds-m-top_medium">
       <div class="slds-card__body slds-card__body_inner">
 
@@ -2395,6 +2622,9 @@
 
       </div>
     </div>
+      </div>
+      <div class="slds-col slds-size_1-of-3 workbucket-sidebar-mount"></div>
+    </div>
   </div>
 
   <div class="app-view" id="view-task-medical-feasibility" hidden>
@@ -2429,7 +2659,7 @@
             <li class="slds-page-header__detail-block">
               <dl>
                 <dt class="slds-text-title slds-truncate" title="Status">Status</dt>
-                <dd class="slds-truncate"><span class="slds-badge">Open</span></dd>
+                <dd class="slds-truncate"><span class="slds-badge home-badge_on-track">On Track</span></dd>
               </dl>
             </li>
             <li class="slds-page-header__detail-block">
@@ -2449,6 +2679,8 @@
       </div>
     </div>
 
+    <div class="slds-grid slds-wrap slds-gutters slds-m-top_medium">
+      <div class="slds-col slds-size_2-of-3">
     <div class="checklist-detail-card slds-m-top_medium">
       <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
         <h3 class="slds-text-heading_small">Documents</h3>
@@ -2510,6 +2742,9 @@
           <button class="slds-button slds-button_neutral">Save Note</button>
         </div>
       </div>
+    </div>
+      </div>
+      <div class="slds-col slds-size_1-of-3 workbucket-sidebar-mount"></div>
     </div>
   </div>
 
@@ -2545,7 +2780,7 @@
             <li class="slds-page-header__detail-block">
               <dl>
                 <dt class="slds-text-title slds-truncate" title="Status">Status</dt>
-                <dd class="slds-truncate"><span class="slds-badge checklist-badge_done">Done</span></dd>
+                <dd class="slds-truncate"><span class="slds-badge home-badge_done">Done</span></dd>
               </dl>
             </li>
             <li class="slds-page-header__detail-block">
@@ -2565,6 +2800,8 @@
       </div>
     </div>
 
+    <div class="slds-grid slds-wrap slds-gutters slds-m-top_medium">
+      <div class="slds-col slds-size_2-of-3">
     <div class="checklist-detail-card slds-m-top_medium">
       <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
         <h3 class="slds-text-heading_small">Documents</h3>
@@ -2626,6 +2863,9 @@
           <button class="slds-button slds-button_neutral">Save Note</button>
         </div>
       </div>
+    </div>
+      </div>
+      <div class="slds-col slds-size_1-of-3 workbucket-sidebar-mount"></div>
     </div>
   </div>
 
@@ -2661,7 +2901,7 @@
             <li class="slds-page-header__detail-block">
               <dl>
                 <dt class="slds-text-title slds-truncate" title="Status">Status</dt>
-                <dd class="slds-truncate"><span class="slds-badge checklist-badge_warning">Approaching Deadline</span></dd>
+                <dd class="slds-truncate"><span class="slds-badge home-badge_due-soon">Due Soon</span></dd>
               </dl>
             </li>
             <li class="slds-page-header__detail-block">
@@ -2681,6 +2921,8 @@
       </div>
     </div>
 
+    <div class="slds-grid slds-wrap slds-gutters slds-m-top_medium">
+      <div class="slds-col slds-size_2-of-3">
     <div class="checklist-detail-card slds-m-top_medium">
       <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
         <h3 class="slds-text-heading_small">Documents</h3>
@@ -2742,6 +2984,9 @@
           <button class="slds-button slds-button_neutral">Save Note</button>
         </div>
       </div>
+    </div>
+      </div>
+      <div class="slds-col slds-size_1-of-3 workbucket-sidebar-mount"></div>
     </div>
   </div>
 
@@ -2777,7 +3022,7 @@
             <li class="slds-page-header__detail-block">
               <dl>
                 <dt class="slds-text-title slds-truncate" title="Status">Status</dt>
-                <dd class="slds-truncate"><span class="slds-badge checklist-badge_warning">Approaching Deadline</span></dd>
+                <dd class="slds-truncate"><span class="slds-badge home-badge_due-soon">Due Soon</span></dd>
               </dl>
             </li>
             <li class="slds-page-header__detail-block">
@@ -2797,6 +3042,8 @@
       </div>
     </div>
 
+    <div class="slds-grid slds-wrap slds-gutters slds-m-top_medium">
+      <div class="slds-col slds-size_2-of-3">
     <div class="checklist-detail-card slds-m-top_medium">
       <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
         <h3 class="slds-text-heading_small">Documents</h3>
@@ -2858,6 +3105,9 @@
           <button class="slds-button slds-button_neutral">Save Note</button>
         </div>
       </div>
+    </div>
+      </div>
+      <div class="slds-col slds-size_1-of-3 workbucket-sidebar-mount"></div>
     </div>
   </div>
 
@@ -3048,31 +3298,31 @@
       // row in the table below AND drives the header of whichever
       // Workbucket tab points back to it (see renderWorkbucketHeader).
       var homeListRecords = [
-        { veteranName: 'Carlos Hazzard', grantNumber: '#12345461', workbucketNumber: 'SAH00260733', phone: '(415) 555-0132', email: 'carlos.hazzard@gmail.com', status: 'Active', statusClass: 'active', region: 'North East' },
-        { veteranName: 'John Stamos', grantNumber: '#12345460', workbucketNumber: 'SAH00260812', phone: '(619) 123 4567', email: 'john_stamos@gmail.com', status: 'Active', statusClass: 'active', region: 'North East' },
-        { veteranName: 'Samual Meisinger', grantNumber: '#12345462', workbucketNumber: 'SAH00261004', phone: '(503) 555-0187', email: 'samual.meisinger@gmail.com', status: 'Deadline Approaching', statusClass: 'deadline-approaching', region: 'South East' },
-        { veteranName: 'Lucas Grant', grantNumber: '#12345463', workbucketNumber: 'SAH00261187', phone: '(206) 555-0143', email: 'lucas.grant@gmail.com', status: 'Active', statusClass: 'active', region: 'West' },
-        { veteranName: 'Olivia Nash', grantNumber: '#12345464', workbucketNumber: 'SAH00261340', phone: '(312) 555-0198', email: 'olivia.nash@gmail.com', status: 'Closed', statusClass: 'closed', region: 'Midwest' },
-        { veteranName: 'Owen Blake', grantNumber: '#12345465', workbucketNumber: 'SAH00261502', phone: '(713) 555-0176', email: 'owen.blake@gmail.com', status: 'Active', statusClass: 'active', region: 'Southwest' },
-        { veteranName: 'Mia Torres', grantNumber: '#12345466', workbucketNumber: 'SAH00261675', phone: '(602) 555-0154', email: 'mia.torres@gmail.com', status: 'Deadline Missed', statusClass: 'deadline-missed', region: 'Southwest' },
-        { veteranName: 'Priya Mehta', grantNumber: '#12345467', workbucketNumber: 'SAH00261811', phone: '(404) 555-0129', email: 'priya.mehta@gmail.com', status: 'Active', statusClass: 'active', region: 'South East' },
-        { veteranName: 'Nadia Frost', grantNumber: '#12345468', workbucketNumber: 'SAH00261950', phone: '(206) 555-0188', email: 'nadia.frost@gmail.com', status: 'Pending', statusClass: 'pending', region: 'West' },
-        { veteranName: 'Caleb Stone', grantNumber: '#12345469', workbucketNumber: 'SAH00262104', phone: '(617) 555-0112', email: 'caleb.stone@gmail.com', status: 'Active', statusClass: 'active', region: 'North East' },
-        { veteranName: 'Isla Vance', grantNumber: '#12345470', workbucketNumber: 'SAH00262267', phone: '(503) 555-0167', email: 'isla.vance@gmail.com', status: 'Closed', statusClass: 'closed', region: 'Northwest' },
-        { veteranName: 'James Holt', grantNumber: '#12345471', workbucketNumber: 'SAH00262390', phone: '(214) 555-0145', email: 'james.holt@gmail.com', status: 'Active', statusClass: 'active', region: 'South East' },
-        { veteranName: 'Tyler Hayes', grantNumber: '#12345472', workbucketNumber: 'SAH00262533', phone: '(720) 555-0193', email: 'tyler.hayes@gmail.com', status: 'Under Review', statusClass: 'under-review', region: 'Midwest' },
-        { veteranName: 'Max Okafor', grantNumber: '#12345473', workbucketNumber: 'SAH00262681', phone: '(305) 555-0121', email: 'max.okafor@gmail.com', status: 'Active', statusClass: 'active', region: 'South East' },
-        { veteranName: 'Ryan Cho', grantNumber: '#12345474', workbucketNumber: 'SAH00262754', phone: '(415) 555-0176', email: 'ryan.cho@gmail.com', status: 'Pending', statusClass: 'pending', region: 'West' },
-        { veteranName: 'Amara Wells', grantNumber: '#12345475', workbucketNumber: 'SAH00262899', phone: '(312) 555-0154', email: 'amara.wells@gmail.com', status: 'Active', statusClass: 'active', region: 'Midwest' },
-        { veteranName: 'Felix Dunn', grantNumber: '#12345476', workbucketNumber: 'SAH00263021', phone: '(206) 555-0132', email: 'felix.dunn@gmail.com', status: 'Closed', statusClass: 'closed', region: 'Northwest' },
-        { veteranName: 'David Park', grantNumber: '#12345477', workbucketNumber: 'SAH00263188', phone: '(617) 555-0187', email: 'david.park@gmail.com', status: 'Active', statusClass: 'active', region: 'North East' },
-        { veteranName: 'Ethan Cole', grantNumber: '#12345478', workbucketNumber: 'SAH00263305', phone: '(713) 555-0143', email: 'ethan.cole@gmail.com', status: 'Under Review', statusClass: 'under-review', region: 'Southwest' },
-        { veteranName: 'Sofia Lund', grantNumber: '#12345479', workbucketNumber: 'SAH00263447', phone: '(602) 555-0198', email: 'sofia.lund@gmail.com', status: 'Active', statusClass: 'active', region: 'Southwest' },
-        { veteranName: 'Marcus Webb', grantNumber: '#12345480', workbucketNumber: 'SAH00263592', phone: '(404) 555-0176', email: 'marcus.webb@gmail.com', status: 'Pending', statusClass: 'pending', region: 'South East' },
-        { veteranName: 'Sarah Chen', grantNumber: '#12345481', workbucketNumber: 'SAH00263710', phone: '(214) 555-0154', email: 'sarah.chen@gmail.com', status: 'Active', statusClass: 'active', region: 'South East' },
-        { veteranName: 'Clara Reeves', grantNumber: '#12345482', workbucketNumber: 'SAH00263865', phone: '(720) 555-0121', email: 'clara.reeves@gmail.com', status: 'Closed', statusClass: 'closed', region: 'Midwest' },
-        { veteranName: 'Noah Briggs', grantNumber: '#12345483', workbucketNumber: 'SAH00263998', phone: '(305) 555-0193', email: 'noah.briggs@gmail.com', status: 'Active', statusClass: 'active', region: 'South East' },
-        { veteranName: 'Leah Kim', grantNumber: '#12345484', workbucketNumber: 'SAH00264102', phone: '(415) 555-0145', email: 'leah.kim@gmail.com', status: 'Under Review', statusClass: 'under-review', region: 'West' }
+        { veteranName: 'Carlos Hazzard', grantNumber: '#12345461', stage: 'Intake', workbucketNumber: 'SAH00260733', phone: '(415) 555-0132', email: 'carlos.hazzard@gmail.com', status: 'On Track', statusClass: 'on-track', region: 'North East' },
+        { veteranName: 'John Stamos', grantNumber: '#12345460', stage: 'Conditional Approval', workbucketNumber: 'SAH00260812', phone: '(619) 123 4567', email: 'john_stamos@gmail.com', status: 'On Track', statusClass: 'on-track', region: 'North East' },
+        { veteranName: 'Samual Meisinger', grantNumber: '#12345462', stage: 'Final Approval', workbucketNumber: 'SAH00261004', phone: '(503) 555-0187', email: 'samual.meisinger@gmail.com', status: 'Due Soon', statusClass: 'due-soon', region: 'South East' },
+        { veteranName: 'Lucas Grant', grantNumber: '#12345463', stage: 'Project Management', workbucketNumber: 'SAH00261187', phone: '(206) 555-0143', email: 'lucas.grant@gmail.com', status: 'On Track', statusClass: 'on-track', region: 'West' },
+        { veteranName: 'Olivia Nash', grantNumber: '#12345464', stage: 'Closed', workbucketNumber: 'SAH00261340', phone: '(312) 555-0198', email: 'olivia.nash@gmail.com', status: 'On Track', statusClass: 'on-track', region: 'Midwest' },
+        { veteranName: 'Owen Blake', grantNumber: '#12345465', stage: 'Conditional Approval', workbucketNumber: 'SAH00261502', phone: '(713) 555-0176', email: 'owen.blake@gmail.com', status: 'On Track', statusClass: 'on-track', region: 'Southwest' },
+        { veteranName: 'Mia Torres', grantNumber: '#12345466', stage: 'Final Accounting', workbucketNumber: 'SAH00261675', phone: '(602) 555-0154', email: 'mia.torres@gmail.com', status: 'Overdue', statusClass: 'overdue', region: 'Southwest' },
+        { veteranName: 'Priya Mehta', grantNumber: '#12345467', stage: 'Intake', workbucketNumber: 'SAH00261811', phone: '(404) 555-0129', email: 'priya.mehta@gmail.com', status: 'On Track', statusClass: 'on-track', region: 'South East' },
+        { veteranName: 'Nadia Frost', grantNumber: '#12345468', stage: 'Project Management', workbucketNumber: 'SAH00261950', phone: '(206) 555-0188', email: 'nadia.frost@gmail.com', status: 'Due Soon', statusClass: 'due-soon', region: 'West' },
+        { veteranName: 'Caleb Stone', grantNumber: '#12345469', stage: 'Conditional Approval', workbucketNumber: 'SAH00262104', phone: '(617) 555-0112', email: 'caleb.stone@gmail.com', status: 'On Track', statusClass: 'on-track', region: 'North East' },
+        { veteranName: 'Isla Vance', grantNumber: '#12345470', stage: 'Closed', workbucketNumber: 'SAH00262267', phone: '(503) 555-0167', email: 'isla.vance@gmail.com', status: 'On Track', statusClass: 'on-track', region: 'Northwest' },
+        { veteranName: 'James Holt', grantNumber: '#12345471', stage: 'Final Approval', workbucketNumber: 'SAH00262390', phone: '(214) 555-0145', email: 'james.holt@gmail.com', status: 'On Track', statusClass: 'on-track', region: 'South East' },
+        { veteranName: 'Tyler Hayes', grantNumber: '#12345472', stage: 'Final Accounting', workbucketNumber: 'SAH00262533', phone: '(720) 555-0193', email: 'tyler.hayes@gmail.com', status: 'Due Soon', statusClass: 'due-soon', region: 'Midwest' },
+        { veteranName: 'Max Okafor', grantNumber: '#12345473', stage: 'Intake', workbucketNumber: 'SAH00262681', phone: '(305) 555-0121', email: 'max.okafor@gmail.com', status: 'On Track', statusClass: 'on-track', region: 'South East' },
+        { veteranName: 'Ryan Cho', grantNumber: '#12345474', stage: 'Project Management', workbucketNumber: 'SAH00262754', phone: '(415) 555-0176', email: 'ryan.cho@gmail.com', status: 'Due Soon', statusClass: 'due-soon', region: 'West' },
+        { veteranName: 'Amara Wells', grantNumber: '#12345475', stage: 'Conditional Approval', workbucketNumber: 'SAH00262899', phone: '(312) 555-0154', email: 'amara.wells@gmail.com', status: 'On Track', statusClass: 'on-track', region: 'Midwest' },
+        { veteranName: 'Felix Dunn', grantNumber: '#12345476', stage: 'Closed', workbucketNumber: 'SAH00263021', phone: '(206) 555-0132', email: 'felix.dunn@gmail.com', status: 'On Track', statusClass: 'on-track', region: 'Northwest' },
+        { veteranName: 'David Park', grantNumber: '#12345477', stage: 'Final Approval', workbucketNumber: 'SAH00263188', phone: '(617) 555-0187', email: 'david.park@gmail.com', status: 'On Track', statusClass: 'on-track', region: 'North East' },
+        { veteranName: 'Ethan Cole', grantNumber: '#12345478', stage: 'Final Accounting', workbucketNumber: 'SAH00263305', phone: '(713) 555-0143', email: 'ethan.cole@gmail.com', status: 'Due Soon', statusClass: 'due-soon', region: 'Southwest' },
+        { veteranName: 'Sofia Lund', grantNumber: '#12345479', stage: 'Intake', workbucketNumber: 'SAH00263447', phone: '(602) 555-0198', email: 'sofia.lund@gmail.com', status: 'On Track', statusClass: 'on-track', region: 'Southwest' },
+        { veteranName: 'Marcus Webb', grantNumber: '#12345480', stage: 'Project Management', workbucketNumber: 'SAH00263592', phone: '(404) 555-0176', email: 'marcus.webb@gmail.com', status: 'Due Soon', statusClass: 'due-soon', region: 'South East' },
+        { veteranName: 'Sarah Chen', grantNumber: '#12345481', stage: 'Conditional Approval', workbucketNumber: 'SAH00263710', phone: '(214) 555-0154', email: 'sarah.chen@gmail.com', status: 'On Track', statusClass: 'on-track', region: 'South East' },
+        { veteranName: 'Clara Reeves', grantNumber: '#12345482', stage: 'Closed', workbucketNumber: 'SAH00263865', phone: '(720) 555-0121', email: 'clara.reeves@gmail.com', status: 'On Track', statusClass: 'on-track', region: 'Midwest' },
+        { veteranName: 'Noah Briggs', grantNumber: '#12345483', stage: 'Final Approval', workbucketNumber: 'SAH00263998', phone: '(305) 555-0193', email: 'noah.briggs@gmail.com', status: 'On Track', statusClass: 'on-track', region: 'South East' },
+        { veteranName: 'Leah Kim', grantNumber: '#12345484', stage: 'Final Accounting', workbucketNumber: 'SAH00264102', phone: '(415) 555-0145', email: 'leah.kim@gmail.com', status: 'Due Soon', statusClass: 'due-soon', region: 'West' }
       ];
 
       function renderHomeListTable() {
@@ -3083,8 +3333,8 @@
           return (
             '<tr data-workbucket-number="' + record.workbucketNumber + '">' +
               '<td><div class="slds-checkbox"><input type="checkbox" id="row-select-' + rowNum + '" /><label class="slds-checkbox__label" for="row-select-' + rowNum + '"><span class="slds-checkbox_faux"></span><span class="slds-assistive-text">Select ' + record.veteranName + '</span></label></div></td>' +
-              '<td><a href="#">' + record.veteranName + '</a></td>' +
-              '<td>' + record.grantNumber + '</td>' +
+              '<td><div class="home-list-grant-cell"><a href="#">' + record.veteranName + '</a><span class="home-list-grant-cell__number">' + record.grantNumber + '</span></div></td>' +
+              '<td>' + record.stage + '</td>' +
               '<td>' + record.workbucketNumber + '</td>' +
               '<td>' + record.phone + '</td>' +
               '<td>' + record.email + '</td>' +
@@ -3145,7 +3395,9 @@
         var statusEl = view.querySelector('.workbucket-header-status');
         if (statusEl) {
           statusEl.textContent = record.status;
-          statusEl.title = record.status;
+          statusEl.className = 'slds-badge home-badge_' + record.statusClass + ' workbucket-header-status';
+          var statusDd = statusEl.closest('dd');
+          if (statusDd) statusDd.title = record.status;
         }
         var veteranEl = view.querySelector('.workbucket-header-veteran-name');
         if (veteranEl) {
@@ -3164,12 +3416,15 @@
           regionEl.title = record.region;
         }
 
-        // Veteran Info tab
-        var veteranNameValue = view.querySelector('.veteran-info-name-value');
+        // Veteran Info / Grant Details tab — this card is a single shared
+        // element that gets moved between views (see showAppView), so it
+        // may not currently be a descendant of #view-workbucket even while
+        // it's the one showing the Home checklist's own data. Query the
+        // whole document rather than scoping to `view`.
+        var veteranNameValue = document.querySelector('.veteran-info-name-value');
         if (veteranNameValue) veteranNameValue.textContent = record.veteranName;
 
-        // Grant Details > Case Information tab
-        var grantDetailsNumberEl = view.querySelector('.grant-details-workbucket-number');
+        var grantDetailsNumberEl = document.querySelector('.grant-details-workbucket-number');
         if (grantDetailsNumberEl) grantDetailsNumberEl.textContent = record.workbucketNumber;
       }
 
@@ -3188,10 +3443,22 @@
         }
       }
 
+      var sidebarCard = document.getElementById('workbucket-sidebar-card');
+
       function showAppView(viewId) {
         document.querySelectorAll('.app-view').forEach(function (view) {
           view.hidden = view.id !== viewId;
         });
+        // The Veteran Info/Grant Details card is a single shared element
+        // (not duplicated per view) — move it into whichever view's mount
+        // point is now showing, so it stays visible across the Checklist
+        // and every task view instead of only existing inside
+        // #view-workbucket.
+        if (sidebarCard) {
+          var activeView = document.getElementById(viewId);
+          var mount = activeView ? activeView.querySelector('.workbucket-sidebar-mount') : null;
+          if (mount) mount.appendChild(sidebarCard);
+        }
       }
 
       var subTabsBar = document.querySelector('.slds-sub-tabs');
@@ -3220,7 +3487,24 @@
         }
 
         parentLi.classList.add('slds-has-sub-tabs');
-        subTabsNav.innerHTML = parentLi.subTabs.map(function (tab) {
+
+        // Pinned first pill: the workbucket's own overview, labeled with its
+        // grant number. Not part of parentLi.subTabs (it's not closable and
+        // isn't a task view) — activeSubTab === null means it's showing.
+        var isHomeActive = !parentLi.activeSubTab;
+        var homePillHtml =
+          '<li class="slds-tabs_default__item slds-sub-tabs__item subtab-home-item' + (isHomeActive ? ' slds-active' : '') + '">' +
+            '<a href="#" class="slds-tabs_default__link" role="tab" aria-selected="' + isHomeActive + '">' +
+              '<span class="slds-icon_container slds-m-right_x-small">' +
+                '<svg class="slds-icon slds-icon_x-small" aria-hidden="true">' +
+                  '<use xlink:href="assets/icons/standard-sprite/svg/symbols.svg#account"></use>' +
+                '</svg>' +
+              '</span>' +
+              '<span class="slds-truncate">' + parentLi.dataset.grantNumber + '</span>' +
+            '</a>' +
+          '</li>';
+
+        var itemPillsHtml = parentLi.subTabs.map(function (tab) {
           var isActive = parentLi.activeSubTab && parentLi.activeSubTab.name === tab.name;
           return (
             '<li class="slds-tabs_default__item slds-sub-tabs__item' + (isActive ? ' slds-active' : '') + '" data-subtab-name="' + tab.name + '">' +
@@ -3241,8 +3525,24 @@
             '</li>'
           );
         }).join('');
+
+        subTabsNav.innerHTML = homePillHtml + itemPillsHtml;
         subTabsBar.hidden = false;
         syncSubTabsBarHeightVar();
+      }
+
+      function showWorkbucketHome(li) {
+        renderWorkbucketHeader({
+          veteranName: li.dataset.veteranName,
+          grantNumber: li.dataset.grantNumber,
+          workbucketNumber: li.dataset.workbucketNumber,
+          status: li.dataset.status,
+          statusClass: li.dataset.statusClass,
+          region: li.dataset.region
+        });
+        li.activeSubTab = null;
+        renderSubTabsBar(li);
+        showAppView('view-workbucket');
       }
 
       function showSubTab(parentLi, tab) {
@@ -3256,6 +3556,13 @@
         subTabsNav.addEventListener('click', function (event) {
           var parentLi = navTabList.querySelector(':scope > .slds-context-bar__item_tab.slds-is-active');
           if (!parentLi || !parentLi.subTabs) return;
+
+          var homeLink = event.target.closest('.subtab-home-item .slds-tabs_default__link');
+          if (homeLink) {
+            event.preventDefault();
+            showWorkbucketHome(parentLi);
+            return;
+          }
 
           var closeBtn = event.target.closest('.subtab-close-btn');
           if (closeBtn) {
@@ -3271,9 +3578,7 @@
               if (fallback) {
                 showSubTab(parentLi, fallback);
               } else {
-                parentLi.activeSubTab = null;
-                showAppView('view-workbucket');
-                renderSubTabsBar(parentLi);
+                showWorkbucketHome(parentLi);
               }
             } else {
               renderSubTabsBar(parentLi);
@@ -3303,20 +3608,11 @@
         var viewId = li.getAttribute('data-view-id');
 
         if (viewId === 'view-workbucket' && li.dataset.workbucketNumber) {
-          renderWorkbucketHeader({
-            veteranName: li.dataset.veteranName,
-            grantNumber: li.dataset.grantNumber,
-            workbucketNumber: li.dataset.workbucketNumber,
-            status: li.dataset.status,
-            region: li.dataset.region
-          });
           // Activating the parent tab always returns to its own overview
           // (not whichever sub-tab was last open) so there's a reliable way
           // back to the checklist to open another item — the sub-tabs bar
-          // stays visible below it with none of its pills marked active.
-          li.activeSubTab = null;
-          renderSubTabsBar(li);
-          showAppView('view-workbucket');
+          // stays visible below it with the grant-number Home pill active.
+          showWorkbucketHome(li);
           return;
         }
 
@@ -3346,15 +3642,42 @@
 
       navTabList.querySelectorAll(':scope > .slds-context-bar__item_tab').forEach(wireNavTab);
 
+      // The pinned tab's own data-view-id/icon/label change to match
+      // whichever Home-dropdown item was last selected, so it's looked up
+      // by its stable .slds-is-pinned class rather than a fixed view id.
+      var homeNavTab = navTabList.querySelector('.slds-context-bar__item_tab.slds-is-pinned');
+
+      function selectHomeNavItem(viewId, label, iconName) {
+        if (!homeNavTab) return;
+        homeNavTab.setAttribute('data-view-id', viewId);
+        var iconUse = homeNavTab.querySelector('.slds-context-bar__label-action .slds-icon_container use');
+        if (iconUse) iconUse.setAttribute('xlink:href', 'assets/icons/utility-sprite/svg/symbols.svg#' + iconName);
+        var assistiveText = homeNavTab.querySelector('.slds-context-bar__label-action .slds-icon_container .slds-assistive-text');
+        if (assistiveText) assistiveText.textContent = label;
+        var truncateLabel = homeNavTab.querySelector('.slds-context-bar__label-action .slds-truncate');
+        if (truncateLabel) truncateLabel.textContent = label;
+        activateNavTab(homeNavTab);
+      }
+
+      document.querySelectorAll('.home-nav-menu-item').forEach(function (item) {
+        item.addEventListener('click', function (event) {
+          event.preventDefault();
+          var label = item.querySelector('.slds-truncate').textContent;
+          selectHomeNavItem(item.getAttribute('data-view-id'), label, item.getAttribute('data-icon'));
+          var trigger = item.closest('.slds-dropdown-trigger');
+          if (trigger) trigger.classList.remove('slds-is-open');
+        });
+      });
+
       var appNameLink = document.querySelector('.slds-context-bar__app-name');
       if (appNameLink) {
         appNameLink.addEventListener('click', function (event) {
           event.preventDefault();
-          var homeTab = navTabList.querySelector('[data-view-id="view-home"]');
-          if (!homeTab) return;
-          activateNavTab(homeTab);
-          var homeLink = homeTab.querySelector('.slds-context-bar__label-action');
-          if (homeLink) homeLink.focus();
+          selectHomeNavItem('view-home', 'Home', 'home');
+          if (homeNavTab) {
+            var homeLink = homeNavTab.querySelector('.slds-context-bar__label-action');
+            if (homeLink) homeLink.focus();
+          }
         });
       }
 
@@ -3391,6 +3714,7 @@
         li.dataset.grantNumber = record.grantNumber;
         li.dataset.workbucketNumber = record.workbucketNumber;
         li.dataset.status = record.status;
+        li.dataset.statusClass = record.statusClass;
         li.dataset.region = record.region;
         li.subTabs = [];
         li.activeSubTab = null;
@@ -3482,6 +3806,17 @@
         event.stopPropagation();
         trigger.classList.toggle('slds-is-open');
       });
+      // Clicking the tab's own label (not just the caret button) also opens
+      // the dropdown — it still activates the tab as normal via wireNavTab's
+      // separate listener on the same link, this just additionally opens
+      // the menu so switching pages doesn't need a second, smaller click.
+      var label = trigger.querySelector('.slds-context-bar__label-action');
+      if (label) {
+        label.addEventListener('click', function (event) {
+          event.stopPropagation();
+          trigger.classList.add('slds-is-open');
+        });
+      }
       document.addEventListener('click', function (event) {
         if (!trigger.contains(event.target)) {
           trigger.classList.remove('slds-is-open');
@@ -3501,6 +3836,37 @@
           trigger.classList.remove('slds-is-open');
         }
       });
+    });
+
+    document.querySelectorAll('.home-list-filter-button').forEach(function (button) {
+      var trigger = button.closest('.slds-dropdown-trigger');
+      if (!trigger) return;
+      var panel = trigger.querySelector('.home-list-filter-panel');
+      button.addEventListener('click', function (event) {
+        event.stopPropagation();
+        trigger.classList.toggle('slds-is-open');
+      });
+      document.addEventListener('click', function (event) {
+        if (!trigger.contains(event.target)) {
+          trigger.classList.remove('slds-is-open');
+        }
+      });
+      var clearButton = panel.querySelector('.home-list-filter-clear');
+      if (clearButton) {
+        clearButton.addEventListener('click', function (event) {
+          event.stopPropagation();
+          panel.querySelectorAll('.home-list-filter-checkbox').forEach(function (checkbox) {
+            checkbox.checked = false;
+          });
+        });
+      }
+      var applyButton = panel.querySelector('.home-list-filter-apply');
+      if (applyButton) {
+        applyButton.addEventListener('click', function (event) {
+          event.stopPropagation();
+          trigger.classList.remove('slds-is-open');
+        });
+      }
     });
 
     document.querySelectorAll('.default-split-view__picker').forEach(function (trigger) {
